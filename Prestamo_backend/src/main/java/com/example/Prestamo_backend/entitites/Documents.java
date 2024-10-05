@@ -18,7 +18,7 @@ public class Documents {
     @Column(unique = true, nullable = false)
     private Long id_document;
 
-    private String document_type;
+    private String documenttype;
     private int date_of_upload;
     private File document;
 }

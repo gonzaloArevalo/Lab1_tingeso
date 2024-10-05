@@ -21,7 +21,7 @@ public class User {
     private String name;
     private String rut;
     private String email;
-    private String user_type;
+    private String usertype;
     private int phone;
     private String adress;
     private boolean files;

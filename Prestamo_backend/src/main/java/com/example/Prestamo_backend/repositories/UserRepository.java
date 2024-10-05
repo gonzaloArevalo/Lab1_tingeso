@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     public User findByRut(String rut);
-    List<User> findBytype(String user_type);
+    List<User> findByUsertype(String usertype);
 
 }

@@ -16,7 +16,7 @@ public class Request {
     @Column(unique = true, nullable = false)
     private Long id_request;
 
-    private int request_date;
-    private String request_status;
+    private int requestdate;
+    private String requeststatus;
     private int amount;
 }

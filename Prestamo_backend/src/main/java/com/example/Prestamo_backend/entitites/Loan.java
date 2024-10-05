@@ -16,10 +16,10 @@ public class Loan {
     @Column(unique = true, nullable = false)
     private Long id_loan;
 
-    private String loan_type;
-    private String loan_status;
+    private String loantype;
+    private String loanstatus;
     private float rate;
     private int quota;
     private int term;
-    private int initial_loan;
+    private int initialloan;
 }

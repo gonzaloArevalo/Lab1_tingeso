@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
-    public Request findByRequest_status(String request_status);
+    public Request findByRequeststatus(String requeststatus);
     List<Request> findByAmountGreaterThan(int amount);
 }

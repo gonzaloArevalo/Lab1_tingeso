@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
+
 @Entity
 @Table(name = "request")
 @Data
@@ -19,4 +21,5 @@ public class Request {
     private int requestdate;
     private String requeststatus;
     private int amount;
+    private File document;
 }

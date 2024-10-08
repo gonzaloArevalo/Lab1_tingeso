@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.File;
+import java.util.Date;
 
 @Entity
 @Table(name = "request")
@@ -18,8 +19,11 @@ public class Request {
     @Column(unique = true, nullable = false)
     private Long id_request;
 
-    private int requestdate;
+    private Date requestdate;
     private String requeststatus;
     private int amount;
+    private int term;
+    private float rate;
+    private boolean credithistory;
     private File document;
 }

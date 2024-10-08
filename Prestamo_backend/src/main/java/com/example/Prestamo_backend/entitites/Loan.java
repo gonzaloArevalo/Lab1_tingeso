@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "loan")
 @Data
@@ -18,8 +20,6 @@ public class Loan {
 
     private String loantype;
     private String loanstatus;
-    private float rate;
     private int quota;
-    private int term;
-    private int initialloan;
+    private Date dateloan;
 }

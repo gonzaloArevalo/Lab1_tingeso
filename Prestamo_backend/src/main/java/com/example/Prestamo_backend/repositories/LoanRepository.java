@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     public Loan findByLoanstatus(String loanstatus);
     public Loan findByLoantype(String loantype);
+    public Loan findByQuota(int quota);
 }

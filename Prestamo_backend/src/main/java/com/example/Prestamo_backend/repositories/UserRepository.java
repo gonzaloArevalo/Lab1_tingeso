@@ -10,5 +10,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     public User findByRut(String rut);
     List<User> findByUsertype(String usertype);
+    List<User> findByAgeGreaterThan(int age);
+    List<User> findByFilesTrue();
 
 }

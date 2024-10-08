@@ -9,5 +9,16 @@ import java.util.List;
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
     public Request findByRequeststatus(String requeststatus);
+
+    public Request findByAmount(int amount);
     List<Request> findByAmountGreaterThan(int amount);
+
+    public Request findByTerm(int term);
+    List<Request> findByTermGreaterThan(int term);
+    List<Request> findByTermLessThan(int term);
+
+    public Request findByRate(float rate);
+    List<Request> findByRateGreaterThan(float rate);
+
+    public Request findByCredithistoryIsTrue();
 }

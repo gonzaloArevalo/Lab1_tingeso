@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.io.File;
+import java.util.Date;
 
 @Entity
 @Table(name = "users")
@@ -20,10 +21,10 @@ public class User {
 
     private String name;
     private String rut;
-    private String email;
     private String usertype;
-    private int phone;
-    private String adress;
+    private int age;
+    //private int timeinbank;
+    private Date timeinbank;
     private boolean files;
     private File document;
 }

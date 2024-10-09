@@ -25,5 +25,8 @@ public class Request {
     private int term;
     private float rate;
     private boolean credithistory;
+    private String loantype;
+    private Date dateloan;
+    private int quota;
     private File document;
 }

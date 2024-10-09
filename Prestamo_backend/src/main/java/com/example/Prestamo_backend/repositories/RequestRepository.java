@@ -21,4 +21,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findByRateGreaterThan(float rate);
 
     public Request findByCredithistoryIsTrue();
+    public Request findByLoantype(String loantype);
+    public Request findByQuota(int quota);
 }

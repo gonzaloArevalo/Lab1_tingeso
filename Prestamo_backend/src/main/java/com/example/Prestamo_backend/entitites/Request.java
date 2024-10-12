@@ -17,8 +17,9 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long id_request;
+    private Long idrequest;
 
+    private Long iduser;
     private Date requestdate;
     private String requeststatus;
     private int amount;

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Date;
 @Repository
 public interface SavingsRepository extends JpaRepository<Savings, Long>{
+    public Savings findByIduser(Long iduser);
+
     public Savings findByBankaccount(int bankaccount);
     List<Savings> findByBankaccountGreaterThan(int bankaccount);
     List<Savings> findByBankaccountLessThan(int bankaccount);

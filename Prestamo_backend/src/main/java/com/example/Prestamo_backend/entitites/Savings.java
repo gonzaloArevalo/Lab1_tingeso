@@ -16,8 +16,9 @@ public class Savings {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long id_savings;
+    private Long idsavings;
 
+    private Long iduser;
     private int bankaccount;
     private Date creation;
     private Date retire;

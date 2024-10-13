@@ -7,8 +7,9 @@ import com.example.Prestamo_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
-
+import java.io.File;
 @Service
 public class RequestService {
     @Autowired
@@ -16,10 +17,12 @@ public class RequestService {
     @Autowired
     private UserRepository userRepository;
 
-    public Request requestloan(Long iduser, int amount, int term, float rate){
+    public Request requestloan(Long iduser, int amount, int term, float rate, File document){
         User user = userRepository.findById(iduser).orElseThrow(()->new IllegalArgumentException("User not found"));
 
-        //condicones para ver si puede hacer una solicitud
+        if(document==null){
+            throw new IllegalArgumentException("there is no documents");
+        }
 
         Request newRequest = new Request();
         newRequest.setAmount(amount);
@@ -30,6 +33,106 @@ public class RequestService {
         newRequest.setDateloan(new Date());
 
         return requestRepository.save(newRequest);
+    }
+
+    public String RequestEvaluation(Long idrequest){
+        Request request = requestRepository.findById(idrequest).orElseThrow(() -> new IllegalArgumentException("Request not found"));
+        //conditions
+        if(!quotaincoming(request)){
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for been above the 35% of quota realtion";
+        }
+
+        if(!unpaiddebts(request)){
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for unpaid debts";
+        }
+
+        if(!stability(request)){
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for no enough time working";
+        }
+
+
+
+        if(!ageofuser(request)){
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for having advanced age";
+        }
+
+        request.setRequeststatus("approved");
+        requestRepository.save(request);
+        return "the request has been approved";
+    }
+
+    private boolean quotaincoming(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        double qta = calculatequota(request);
+        double relation =  (qta/user.getIncome())*100;
+        if(relation < 35){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    private boolean unpaiddebts(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(user.isCredithistory()){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    private boolean stability(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Calendar init = Calendar.getInstance();
+        init.setTime(user.getTimeinbank());
+
+        Calendar today = Calendar.getInstance();
+
+        int years = today.get(Calendar.YEAR) - init.get(Calendar.YEAR);
+        if(today.get(Calendar.DAY_OF_YEAR) < init.get(Calendar.DAY_OF_YEAR)){
+            years--;
+        }
+        return years >=1;
+    }
+
+    /*private boolean debtincome(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        double monthincome = user.getIncome();
+        int debts = user.getDebts();
+        double qta = calculatequota(request);
+    }*/
+
+    private boolean maxfinancial(Request request){
+        double =
+    }
+
+    private boolean ageofuser(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        int age = user.getAge() + request.getTerm();
+        if(age > 75){
+            return false;
+        }
+        return (75 - age) >= 5;
+    }
+
+    private double calculatequota(Request request){
+        int menterm = request.getTerm() * 12;
+        float rt = request.getRate();
+        double factor = Math.pow(1 + rt, menterm);
+        double qtamen = (request.getAmount() * menterm * factor) / (factor - 1);
+
+        return qtamen;
     }
 
     public String viewStatus(Long iduser){

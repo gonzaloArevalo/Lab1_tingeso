@@ -25,6 +25,13 @@ public class User {
     private int age;
     //private int timeinbank;
     private Date timeinbank;
+    private int bankaccount;
+    private Date creation;
+    private Date retire;
+    private int moneyout;
+    private boolean credithistory;
+    private int debts;
+    private int income;
     private boolean files;
     private File document;
 }

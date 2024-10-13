@@ -26,6 +26,7 @@ public class Request {
     private int amount;
     private int term;
     private float rate;
+    private double propertyvalue;
     private boolean credithistory;
     private String loantype;
     private Date dateloan;

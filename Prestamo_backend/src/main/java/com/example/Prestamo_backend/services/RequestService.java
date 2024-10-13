@@ -58,6 +58,12 @@ public class RequestService {
 
 
 
+        if(!maxfinancial(request)){
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for exceeding loan limit";
+        }
+
         if(!ageofuser(request)){
             request.setRequeststatus("rejected");
             requestRepository.save(request);
@@ -114,7 +120,25 @@ public class RequestService {
     }*/
 
     private boolean maxfinancial(Request request){
-        double =
+        double maxper = percentage(request.getLoantype());
+        double requested = request.getPropertyvalue() * maxper;
+
+        return request.getAmount() <= requested;
+    }
+
+    private double percentage(String loantype){
+        switch (loantype.toLowerCase()) {
+            case "first living":
+                return 0.80;
+            case "second living":
+                return 0.70;
+            case "commercial properties":
+                return 0.60;
+            case "remodelation":
+                return 0.50;
+            default:
+                throw new IllegalArgumentException("loan type not allowed");
+        }
     }
 
     private boolean ageofuser(Request request){

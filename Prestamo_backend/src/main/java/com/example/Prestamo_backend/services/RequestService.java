@@ -61,7 +61,11 @@ public class RequestService {
             return "the request has been rejected for no enough time working";
         }
 
-
+        if(!debtincome(request)){
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for relation of income/quota superior to 50%";
+        }
 
         if(!maxfinancial(request)){
             request.setRequeststatus("rejected");
@@ -142,12 +146,16 @@ public class RequestService {
         return years >=1;
     }
 
-    /*private boolean debtincome(Request request){
+    private boolean debtincome(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        double monthincome = user.getIncome();
-        int debts = user.getDebts();
-        double qta = calculatequota(request);
-    }*/
+        double qtamonth = calculatequota(request);
+        double totaldebt = user.getDebts();
+        double totalmoney = qtamonth + totaldebt;
+        double income = user.getIncome();
+        double relationqtainc = totalmoney/income;
+
+        return relationqtainc <= 0.50;
+    }
 
     private boolean maxfinancial(Request request){
         double maxper = percentage(request.getLoantype());
@@ -289,5 +297,21 @@ public class RequestService {
             default:
                 return "Unknown request status.";
         }
+    }
+
+    public String calculatetotalcosts(Request request){
+        double qta = calculatequota(request);
+        double desgravamen = request.getAmount() * 0.03;
+        double fire = 20000;
+        double admin = request.getAmount() * 0.01;
+
+        double monthlycost = qta + desgravamen + fire;
+        double totalcost = (monthlycost * request.getTerm()) + admin;
+        return "monthly quota:" + qta +
+                "\nDesgravamen insurance" + desgravamen +
+                "\nfire insurance" + fire +
+                "\nadministrator fee" + admin +
+                "\ntotal monthly costs" + monthlycost +
+                "\ntotal costs" + totalcost;
     }
 }

@@ -19,6 +19,7 @@ public class Request {
     @Column(unique = true, nullable = false)
     private Long idrequest;
 
+    @Column(name = "iduser")
     private Long iduser;
     private Date requestdate;
     private String requeststatus;

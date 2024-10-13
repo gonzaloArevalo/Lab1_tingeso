@@ -18,6 +18,7 @@ public class Savings {
     @Column(unique = true, nullable = false)
     private Long idsavings;
 
+    @Column(name = "iduser")
     private Long iduser;
     private int bankaccount;
     private Date creation;

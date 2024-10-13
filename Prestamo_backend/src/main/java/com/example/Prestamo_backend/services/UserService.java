@@ -74,8 +74,6 @@ public class UserService {
         return term;
     }
 
-
-
     public double calculateSimulation(int amount, float term, float rate){
         float rate1 = (1+rate);
         double rate1n = Math.pow(rate1,term);

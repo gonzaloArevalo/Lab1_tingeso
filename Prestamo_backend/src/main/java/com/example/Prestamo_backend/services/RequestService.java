@@ -37,6 +37,11 @@ public class RequestService {
 
     public String RequestEvaluation(Long idrequest){
         Request request = requestRepository.findById(idrequest).orElseThrow(() -> new IllegalArgumentException("Request not found"));
+        request.setRequeststatus("under evaluation");
+        requestRepository.save(request);
+
+        String Savingcapacity;
+        int savcapacity = 0;
         //conditions
         if(!quotaincoming(request)){
             request.setRequeststatus("rejected");
@@ -70,6 +75,39 @@ public class RequestService {
             return "the request has been rejected for having advanced age";
         }
 
+        if(validatesalary(request)){
+            savcapacity++;
+        }
+
+        if(savehistory(request)){
+            savcapacity++;
+        }
+
+        if(validateperiodicbank(request)){
+            savcapacity++;
+        }
+
+        if(validatesalold(request)){
+            savcapacity++;
+        }
+
+        if(recentretire(request)){
+            savcapacity++;
+        }
+
+        if(savcapacity >= 5){
+            Savingcapacity = "solid";
+        }
+        else if (savcapacity ==3 || savcapacity == 4) {
+            Savingcapacity = "moderated";
+        }
+        else if (savcapacity <= 2) {
+            Savingcapacity = "insufficent";
+            request.setRequeststatus("rejected");
+            requestRepository.save(request);
+            return "the request has been rejected for having to little approved conditions";
+        }
+
         request.setRequeststatus("approved");
         requestRepository.save(request);
         return "the request has been approved";
@@ -100,15 +138,7 @@ public class RequestService {
 
     private boolean stability(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Calendar init = Calendar.getInstance();
-        init.setTime(user.getTimeinbank());
-
-        Calendar today = Calendar.getInstance();
-
-        int years = today.get(Calendar.YEAR) - init.get(Calendar.YEAR);
-        if(today.get(Calendar.DAY_OF_YEAR) < init.get(Calendar.DAY_OF_YEAR)){
-            years--;
-        }
+        int years = calculateyears(user.getTimeinbank());
         return years >=1;
     }
 
@@ -157,6 +187,66 @@ public class RequestService {
         double qtamen = (request.getAmount() * menterm * factor) / (factor - 1);
 
         return qtamen;
+    }
+
+    public boolean validatesalary(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        double minsalary = request.getAmount() * 0.10;
+        return user.getBankaccount() >= minsalary;
+    }
+
+    public boolean savehistory(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Calendar twelvemonths = Calendar.getInstance();
+        twelvemonths.add(Calendar.MONTH, -12);
+        if(user.getRetire()!=null && user.getRetire().after(twelvemonths.getTime())){
+            double perretire = user.getMoneyout() / user.getBankaccount();
+            return perretire <= 0.5;
+        }
+        return true;
+    }
+
+    public boolean validateperiodicbank(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        double minincome = user.getIncome() * 0.05 * 12;
+        return user.getBankaccount() >= minincome;
+    }
+
+    public boolean validatesalold(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        int old = calculateyears(user.getCreation());
+        double minsalary;
+        if(old < 2 && old >= 0){
+            minsalary = request.getAmount() * 0.20;
+        }
+        else{
+            minsalary = request.getAmount() * 0.10;
+        }
+        return user.getBankaccount() >= minsalary;
+    }
+
+    public boolean recentretire(Request request){
+        User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Calendar sixmonths = Calendar.getInstance();
+        sixmonths.add(Calendar.MONTH, -6);
+        if(user.getRetire() != null && user.getRetire().after(sixmonths.getTime())){
+            double perretire = user.getMoneyout() / user.getBankaccount();
+            return perretire <= 0.30;
+        }
+        return true;
+    }
+
+    private int calculateyears(Date date){
+        Calendar init = Calendar.getInstance();
+        init.setTime(date);
+
+        Calendar today = Calendar.getInstance();
+
+        int years = today.get(Calendar.YEAR) - init.get(Calendar.YEAR);
+        if (today.get(Calendar.DAY_OF_YEAR) < init.get(Calendar.DAY_OF_YEAR)) {
+            years--;
+        }
+        return years;
     }
 
     public String viewStatus(Long iduser){

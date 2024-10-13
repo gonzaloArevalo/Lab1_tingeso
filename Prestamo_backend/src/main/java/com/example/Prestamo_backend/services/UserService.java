@@ -16,6 +16,8 @@ public class UserService {
         return (ArrayList<User>) userRepository.findByUsertype(type);
     }
 
+    public ArrayList<User> getUsers(){return (ArrayList<User>) userRepository.findAll();}
+
     public User saveUser(User user){return userRepository.save(user);}
 
     public User getUserById(Long iduser){ return userRepository.findById(iduser).get();}
@@ -42,12 +44,15 @@ public class UserService {
             case "second living":
                 rate = limitrate(4.0f, 6.0f, rate);
                 term = limitterm(20, term);
+                break;
             case "commercial properties":
                 rate = limitrate(5.0f, 7.0f, rate);
                 term = limitterm(25, term);
+                break;
             case "remodelation":
                 rate = limitrate(4.5f, 6.0f, rate);
                 term = limitterm(15, term);
+                break;
             default:
                 throw new IllegalArgumentException("loan not recognized");
         }

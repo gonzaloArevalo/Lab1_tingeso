@@ -7,6 +7,7 @@ import com.example.Prestamo_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.io.File;
@@ -16,6 +17,10 @@ public class RequestService {
     RequestRepository requestRepository;
     @Autowired
     private UserRepository userRepository;
+
+    public ArrayList<Request> getRequests(){
+        return (ArrayList<Request>) requestRepository.findAll();
+    }
 
     public Request requestloan(Long iduser, int amount, int term, float rate, File document){
         User user = userRepository.findById(iduser).orElseThrow(()->new IllegalArgumentException("User not found"));

@@ -34,25 +34,25 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/")
+    @PostMapping("/")
     public ResponseEntity<User> saveUser(@RequestBody User user){
         User usernew = userService.saveUser(user);
         return ResponseEntity.ok(usernew);
     }
 
-    @GetMapping("/")
+    @PutMapping("/")
     public ResponseEntity<User> updateUser(@RequestBody User user){
         User userUpdate = userService.updateUser(user);
         return ResponseEntity.ok(userUpdate);
     }
 
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteUserById(@PathVariable Long id) throws Exception{
         var isDeleted = userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user){
         try {
             User newUser = userService.register(user);

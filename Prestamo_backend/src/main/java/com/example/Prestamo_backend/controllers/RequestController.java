@@ -22,14 +22,31 @@ import org.springframework.web.multipart.MultipartFile;
 public class RequestController {
     RequestService requestService;
 
+    @GetMapping("/")
     public ResponseEntity<List<Request>> listrequests(){
         List<Request> requests = requestService.getRequests();
         return ResponseEntity.ok(requests);
     }
 
-    //missing getrequestbyid, deleterequestbyid, updaterequest
+    @GetMapping("/{id}")
+    public ResponseEntity<Request> getRequestById(@PathVariable Long id){
+        Request idRequest = requestService.getRequestById(id);
+        return ResponseEntity.ok(idRequest);
+    }
 
-    @GetMapping("/request")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Request> deleteRequestById(@PathVariable Long id) throws Exception{
+        var isDeleted = requestService.deleteRequestById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/")
+    public ResponseEntity<Request> updateRequest(@RequestBody Request request){
+        Request updateRequest = requestService.updateRequest(request);
+        return ResponseEntity.ok(updateRequest);
+    }
+
+    @PostMapping("/request")
     public ResponseEntity<Request> requestLoan(@RequestParam Long iduser,
                                                @RequestParam int amount,
                                                @RequestParam int term,

@@ -22,6 +22,19 @@ public class RequestService {
         return (ArrayList<Request>) requestRepository.findAll();
     }
 
+    public Request getRequestById(Long id){return requestRepository.findById(id).get();}
+
+    public Request updateRequest(Request request){return requestRepository.save(request);}
+
+    public boolean deleteRequestById(long id) throws Exception{
+        try{
+            requestRepository.deleteById(id);
+            return true;
+        }catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     public Request requestloan(Long iduser, int amount, int term, float rate, File document){
         User user = userRepository.findById(iduser).orElseThrow(()->new IllegalArgumentException("User not found"));
 

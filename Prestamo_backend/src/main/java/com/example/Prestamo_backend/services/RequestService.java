@@ -150,7 +150,7 @@ public class RequestService {
 
     private boolean unpaiddebts(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if(user.isCredithistory()){
+        if(user.isCredithistory() && user.getDebts() != 0){
             return false;
         }
         else{

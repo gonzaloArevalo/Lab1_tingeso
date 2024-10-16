@@ -22,7 +22,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/")
+    @GetMapping("/clients")
     public ResponseEntity<List<User>> listUsersclient(){
         List<User> usersclient = userService.getUsertype("client");
         return ResponseEntity.ok(usersclient);

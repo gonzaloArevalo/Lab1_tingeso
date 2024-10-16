@@ -20,15 +20,15 @@ public class UserService {
 
     public User saveUser(User user){return userRepository.save(user);}
 
-    public User getUserById(Long iduser){ return userRepository.findById(iduser).get();}
+    public User getUserById(Long id){ return userRepository.findById(id).get();}
 
     public User getUserByRut(String rut){ return userRepository.findByRut(rut);}
 
     public User updateUser(User user){ return userRepository.save(user);}
 
-    public boolean deleteUser(Long iduser) throws Exception{
+    public boolean deleteUser(Long id) throws Exception{
         try{
-            userRepository.deleteById(iduser);
+            userRepository.deleteById(id);
             return true;
         } catch (Exception e){
             throw new Exception(e.getMessage());

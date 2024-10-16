@@ -1,8 +1,6 @@
 package com.example.Prestamo_backend.entitites;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.io.File;
@@ -13,11 +11,14 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long iduser;
+    private Long id;
 
     private String name;
     private String rut;
@@ -33,5 +34,7 @@ public class User {
     private int debts;
     private int income;
     private boolean files;
-    private File document;
+
+    @Lob
+    private byte[] personaldocument;
 }

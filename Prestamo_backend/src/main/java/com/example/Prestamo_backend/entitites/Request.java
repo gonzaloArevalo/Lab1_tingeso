@@ -1,11 +1,7 @@
 package com.example.Prestamo_backend.entitites;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.File;
+import lombok.*;
 import java.util.Date;
 
 @Entity
@@ -13,11 +9,14 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Getter
+@Setter
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false)
-    private Long idrequest;
+    @Column(unique = false, nullable = false)
+    private Long id;
 
     @Column(name = "iduser")
     private Long iduser;
@@ -31,5 +30,7 @@ public class Request {
     private String loantype;
     private Date dateloan;
     private int quota;
-    private File document;
+
+    @Lob
+    private byte[] document;
 }

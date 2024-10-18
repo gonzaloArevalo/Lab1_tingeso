@@ -34,7 +34,4 @@ public class User {
     private int debts;
     private int income;
     private boolean files;
-
-    @Lob
-    private byte[] personaldocument;
 }

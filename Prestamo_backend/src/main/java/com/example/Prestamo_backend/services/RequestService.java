@@ -6,11 +6,13 @@ import com.example.Prestamo_backend.repositories.RequestRepository;
 import com.example.Prestamo_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.io.File;
+import java.io.IOException;
+
 @Service
 public class RequestService {
     @Autowired
@@ -35,7 +37,7 @@ public class RequestService {
         }
     }
 
-    public Request requestloan(Long iduser, int amount, int term, float rate, File document){
+    public Request requestloan(Long iduser, int amount, int term, float rate, MultipartFile document) throws IOException{
         User user = userRepository.findById(iduser).orElseThrow(()->new IllegalArgumentException("User not found"));
 
         if(document==null){
@@ -49,6 +51,7 @@ public class RequestService {
         newRequest.setRate(rate);
         newRequest.setRequeststatus("initial review");
         newRequest.setDateloan(new Date());
+        newRequest.setDocument(document.getBytes());
 
         return requestRepository.save(newRequest);
     }

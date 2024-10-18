@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 
-import java.io.File;
+
 import java.util.List;
-
+import java.io.IOException;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,7 +52,7 @@ public class RequestController {
                                                @RequestParam int amount,
                                                @RequestParam int term,
                                                @RequestParam float rate,
-                                               @RequestPart File document){
+                                               @RequestPart MultipartFile document){
         try{
             //File convertedFile = convertMultipartFileToFile(document);
             Request newRequest = requestService.requestloan(iduser,amount,term,rate,document);
@@ -59,6 +60,9 @@ public class RequestController {
         }
         catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(null);
+        }
+        catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

@@ -23,15 +23,16 @@ public class User {
     private String name;
     private String rut;
     private String usertype;
-    private int age;
-    //private int timeinbank;
+    private Date age;
     private Date timeinbank;
+    private Date timeinwork; //time that the user has been working
     private int bankaccount;
-    private Date creation;
-    private Date retire;
+    private Date creation; //date of creation of the account
+    private Date retire; //date of retire of money from the account
     private int moneyout;
     private boolean credithistory;
-    private int debts;
-    private int income;
+    private int debts; //total debts from the user
+    private int income; //income of the user
     private boolean files;
+    private String movements; //money movements that the user has made
 }

@@ -122,12 +122,15 @@ public class RequestService {
 
         if(savcapacity >= 5){
             Savingcapacity = "solid";
+            request.setSavingability(Savingcapacity);
         }
         else if (savcapacity ==3 || savcapacity == 4) {
             Savingcapacity = "moderated";
+            request.setSavingability(Savingcapacity);
         }
         else if (savcapacity <= 2) {
             Savingcapacity = "insufficent";
+            request.setSavingability(Savingcapacity);
             request.setRequeststatus("rejected");
             requestRepository.save(request);
             return "the request has been rejected for having to little approved conditions";
@@ -202,11 +205,30 @@ public class RequestService {
 
     private boolean ageofuser(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        int age = user.getAge() + request.getTerm();
+        int age0 = obtainAge(user.getAge());
+        int age = age0 + request.getTerm();
         if(age > 75){
             return false;
         }
         return (75 - age) >= 5;
+    }
+
+    private int obtainAge(Date age){
+        if(age != null){
+            Calendar birth = Calendar.getInstance();
+            birth.setTime(age);
+
+            Calendar actualdate = Calendar.getInstance();
+            int actualage = actualdate.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+            if(actualdate.get(Calendar.DAY_OF_YEAR) < birth.get(Calendar.DAY_OF_YEAR)){
+                actualage--;
+            }
+
+            return actualage;
+        }
+        else{
+            return 0;
+        }
     }
 
     private double calculatequota(Request request){

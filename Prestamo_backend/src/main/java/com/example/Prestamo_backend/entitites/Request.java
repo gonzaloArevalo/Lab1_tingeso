@@ -30,7 +30,24 @@ public class Request {
     private String loantype;
     private Date dateloan;
     private int quota;
+    private String savingability;
 
     @Lob
     private byte[] document;
+    @Lob
+    private byte[] incometicket;
+    @Lob
+    private byte[] credithistorial;
+    @Lob
+    private byte[] appraisalcertificate;
+    @Lob
+    private byte[] deedfirsthome;
+    @Lob
+    private byte[] buisnessstate;
+    @Lob
+    private byte[] buisnessplan;
+    @Lob
+    private byte[] rembudget;
+    @Lob
+    private byte[] appcertificatenew;
 }

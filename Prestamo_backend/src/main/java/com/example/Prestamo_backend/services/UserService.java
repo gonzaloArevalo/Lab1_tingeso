@@ -89,7 +89,7 @@ public class UserService {
     }
 
     public boolean rutverification(String rut){
-        return rut != null && rut.length() > 0;
+        return rut != null && !rut.isEmpty();
     }
 
     public User register(User user){

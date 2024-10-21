@@ -35,4 +35,5 @@ public class User {
     private int income; //income of the user
     private boolean files;
     private String movements; //money movements that the user has made
+    private String movmntsdate;
 }

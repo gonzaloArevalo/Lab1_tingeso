@@ -37,10 +37,14 @@ public class RequestService {
         }
     }
 
-    public Request requestloan(Long iduser, int amount, int term, float rate, MultipartFile document) throws IOException{
+    public Request requestloan(Long iduser, int amount, int term, float rate,
+                               MultipartFile incometicket, MultipartFile credithistorial,
+                               MultipartFile appraisalcertificate, MultipartFile deedfirsthome,
+                               MultipartFile buisnessstate, MultipartFile buisnessplan,
+                               MultipartFile rembudget, MultipartFile appcertificatenew) throws IOException{
         User user = userRepository.findById(iduser).orElseThrow(()->new IllegalArgumentException("User not found"));
 
-        if(document==null){
+        if(incometicket==null){
             throw new IllegalArgumentException("there is no documents");
         }
 
@@ -51,7 +55,14 @@ public class RequestService {
         newRequest.setRate(rate);
         newRequest.setRequeststatus("initial review");
         newRequest.setDateloan(new Date());
-        newRequest.setDocument(document.getBytes());
+        newRequest.setIncometicket(incometicket.getBytes());
+        newRequest.setCredithistorial(credithistorial.getBytes());
+        newRequest.setAppraisalcertificate(appraisalcertificate.getBytes());
+        newRequest.setDeedfirsthome(deedfirsthome.getBytes());
+        newRequest.setBuisnessstate(buisnessstate.getBytes());
+        newRequest.setBuisnessplan(buisnessplan.getBytes());
+        newRequest.setRembudget(rembudget.getBytes());
+        newRequest.setAppcertificatenew(appcertificatenew.getBytes());
 
         return requestRepository.save(newRequest);
     }
@@ -166,7 +177,7 @@ public class RequestService {
 
     private boolean stability(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        int years = calculateyears(user.getTimeinbank());
+        int years = calculateyears(user.getTimeinwork());
         return years >=1;
     }
 
@@ -239,6 +250,8 @@ public class RequestService {
 
         return qtamen;
     }
+
+    //----------------R7
 
     public boolean validatesalary(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));

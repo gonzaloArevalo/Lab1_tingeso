@@ -52,10 +52,19 @@ public class RequestController {
                                                @RequestParam int amount,
                                                @RequestParam int term,
                                                @RequestParam float rate,
-                                               @RequestPart MultipartFile document){
+                                               @RequestPart MultipartFile incometicket,
+                                               @RequestPart(required = false) MultipartFile credithistorial,
+                                               @RequestPart(required = false) MultipartFile appraisalcertificate,
+                                               @RequestPart(required = false) MultipartFile deedfirsthome,
+                                               @RequestPart(required = false) MultipartFile buisnessstate,
+                                               @RequestPart(required = false) MultipartFile buisnessplan,
+                                               @RequestPart(required = false) MultipartFile rembudget,
+                                               @RequestPart(required = false) MultipartFile appcertificatenew){
         try{
             //File convertedFile = convertMultipartFileToFile(document);
-            Request newRequest = requestService.requestloan(iduser,amount,term,rate,document);
+            Request newRequest = requestService.requestloan(iduser,amount,term,rate,incometicket, credithistorial, appraisalcertificate,
+                    deedfirsthome, buisnessstate, buisnessplan,
+                    rembudget, appcertificatenew);
             return ResponseEntity.ok(newRequest);
         }
         catch (IllegalArgumentException e){

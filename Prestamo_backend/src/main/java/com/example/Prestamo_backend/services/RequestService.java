@@ -9,9 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
 import java.io.IOException;
+import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class RequestService {
@@ -78,7 +83,7 @@ public class RequestService {
         if(!quotaincoming(request)){
             request.setRequeststatus("rejected");
             requestRepository.save(request);
-            return "the request has been rejected for been above the 35% of quota realtion";
+            return "the request has been rejected for been above the 35% of quota relation";
         }
 
         if(!unpaiddebts(request)){
@@ -251,7 +256,7 @@ public class RequestService {
         return qtamen;
     }
 
-    //----------------R7
+    //--------------------------------------------------------------------R7
 
     public boolean validatesalary(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -261,19 +266,63 @@ public class RequestService {
 
     public boolean savehistory(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Calendar twelvemonths = Calendar.getInstance();
-        twelvemonths.add(Calendar.MONTH, -12);
-        if(user.getRetire()!=null && user.getRetire().after(twelvemonths.getTime())){
-            double perretire = user.getMoneyout() / user.getBankaccount();
-            return perretire <= 0.5;
+        LocalDate today = LocalDate.now();
+        LocalDate twelvemonths = today.minusMonths(12);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
+
+        int balance = user.getBankaccount();
+
+        for(int i = 0; i < mov.size(); i++){
+            LocalDate actualdt = dt.get(i);
+            int actualmov = mov.get(i);
+
+            if(actualdt.isAfter(twelvemonths) && actualdt.isBefore(today)){
+                balance = balance + actualmov;
+
+                if(balance <= 0){
+                    return false;
+                }
+                //if there was a withdrawal and that withdraw was superior to the 50% of user account
+                if(actualmov < 0 && Math.abs(actualmov) > 0.5 * user.getBankaccount()){
+                    return false;
+                }
+            }
         }
         return true;
     }
 
     public boolean validateperiodicbank(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        double minincome = user.getIncome() * 0.05 * 12;
-        return user.getBankaccount() >= minincome;
+        LocalDate today = LocalDate.now();
+        LocalDate twelvemonths = today.minusMonths(12);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
+
+        int minbank = (int) (0.05 * user.getIncome());
+
+        List<LocalDate> dtmonthly = new ArrayList<>();
+        LocalDate lastAddedDate = null;
+
+        for(int i = 0; i < mov.size(); i++){
+            LocalDate actualdt = dt.get(i);
+            int actualmov = mov.get(i);
+
+            if(actualmov > 0 && actualdt.isAfter(twelvemonths) && actualdt.isBefore(today)){
+                if (lastAddedDate == null || actualdt.isAfter(lastAddedDate.plusMonths(1))){
+                    dtmonthly.add(actualdt);
+                    lastAddedDate = actualdt;
+                    if(actualmov < minbank){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public boolean validatesalold(Request request){
@@ -291,11 +340,26 @@ public class RequestService {
 
     public boolean recentretire(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Calendar sixmonths = Calendar.getInstance();
-        sixmonths.add(Calendar.MONTH, -6);
-        if(user.getRetire() != null && user.getRetire().after(sixmonths.getTime())){
-            double perretire = user.getMoneyout() / user.getBankaccount();
-            return perretire <= 0.30;
+        LocalDate today = LocalDate.now();
+        LocalDate sixmonths = today.minusMonths(6);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
+
+        int balance = user.getBankaccount();
+
+        for(int i = 0; i< mov.size(); i++){
+            LocalDate actualdt = dt.get(i);
+            int actualmov = mov.get(i);
+
+            if (actualdt.isAfter(sixmonths) && actualdt.isBefore(today)){
+                if(actualmov < 0){
+                    if(Math.abs(actualmov) > 0.3 * balance){
+                        return false;
+                    }
+                }
+            }
         }
         return true;
     }
@@ -311,6 +375,15 @@ public class RequestService {
             years--;
         }
         return years;
+    }
+
+    private List<Integer> strtolst(String mov){
+        return Arrays.stream(mov.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+    }
+
+    private List<LocalDate> strtodt(String dt){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return Arrays.stream(dt.split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
     }
 
     public String viewStatus(Long iduser){

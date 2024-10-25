@@ -14,14 +14,14 @@ function App() {
   return (
       <Router>
           <div className="container">
-          <Navbar></Navbar>
+            <Navbar></Navbar>
             <Routes>
               <Route path="/home" element={<Home/>} />
               <Route path="/simulation" element={<Simulation/>} />
               <Route path="/client/list" element={<ClientList/>} />
               <Route path="/client/add" element={<AddEditClient/>} />
               <Route path="/client/edit/:id" element={<AddEditClient/>} />
-              <Route path="/request/list" element={<RequestList/>} />
+              <Route path="/request/list:id" element={<RequestList/>} />
               <Route path="/request/add" element={<AddEditRequest/>} />
               <Route path="/request/edit/:id" element={<AddEditRequest/>} />
               <Route path="/quota/totalcosts" element={<TotalCosts/>} />

@@ -80,11 +80,13 @@ public class UserService {
     }
 
     public double calculateSimulation(int amount, float term, float rate){
-        float rate1 = (1+rate);
-        double rate1n = Math.pow(rate1,term);
-        double denominator = rate1n * rate;
-        double numerator = rate1n - 1;
-        double M = (denominator/numerator)*amount;
+        float rate0 = (rate/100)/12; //from interanual to intermonthly
+        float rate1 = (1+rate0); //(1 + r)
+        float term1 = term * 12; //from years to months
+        double rate1n = Math.pow(rate1,term1); //(1+r)**n
+        double numerator = rate1n * rate0;
+        double denominator = rate1n - 1;
+        double M = (numerator/denominator)*amount;
         return M;
     }
 

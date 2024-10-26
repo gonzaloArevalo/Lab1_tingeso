@@ -18,6 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 
 export default function Sidemenu({ open, toggleDrawer }) {
+  const navigate = useNavigate();
     const listOptions = () => (
     <Box
       role="presentation"
@@ -44,7 +45,7 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemIcon>
             <PeopleAltIcon />
           </ListItemIcon>
-          <ListItemText primary="EClientes" />
+          <ListItemText primary="Clientes" />
         </ListItemButton>
 
         </List>

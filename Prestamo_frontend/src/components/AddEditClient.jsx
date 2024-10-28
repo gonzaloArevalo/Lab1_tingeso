@@ -30,7 +30,7 @@ const AddEditClient = () => {
     const saveUser = (e) =>{
         e.preventDefault();
 
-        const user = {rut, name, salary, usertype, age, timeinwork, bankaccount
+        const user = {rut, name, income, usertype, age, timeinwork, bankaccount
             , creation, credithistory, debts, files, movements, movmntsdate, id
         };
         if(id){
@@ -130,7 +130,7 @@ const AddEditClient = () => {
                         id="income"
                         label="Income"
                         type="number"
-                        value={salary}
+                        value={income}
                         variant="standard"
                         onChange={(e) => setIncome(e.target.value)}
                         helperText="Salario mensual en Pesos Chilenos"
@@ -162,6 +162,9 @@ const AddEditClient = () => {
                         variant="standard"
                         onChange={(e) => setAge(e.target.value)}
                         helperText="Ej: 27/01/2001 "
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
                     />
                 </FormControl>
 
@@ -174,6 +177,9 @@ const AddEditClient = () => {
                         variant="standard"
                         onChange={(e) => setTimeInWork(e.target.value)}
                         helperText="Ej: 27/01/2001 , porfavor coloque fecha de contratacion"
+                        InputLabelProps={{
+                            shrink: true, // Esto hará que el label no se superponga con el formato
+                        }}
                     />
                 </FormControl>
 
@@ -198,6 +204,9 @@ const AddEditClient = () => {
                         variant="standard"
                         onChange={(e) => SetCreation(e.target.value)}
                         helperText="Ej: 16/04/2013"
+                        InputLabelProps={{
+                            shrink: true, // Esto hará que el label no se superponga con el formato
+                        }}
                     />
                 </FormControl>
 

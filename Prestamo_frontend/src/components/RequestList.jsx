@@ -15,7 +15,6 @@ import requestService from "../services/request.service";
 import { useParams } from 'react-router-dom';
 
 const RequestList = ({ userId }) => {
-    const { userId } = useParams();
     const [requests, setRequests] = useState([]);
     const navigate = useNavigate();
 

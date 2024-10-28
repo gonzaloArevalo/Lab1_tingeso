@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import userService from "../services/user.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -11,8 +12,7 @@ import Button from "@mui/material/Button";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import userService from "../services/user.service";
-import AssignmentIcon  from "@mui/icons-material";
+import AssignmentIcon  from "@mui/icons-material/Assignment";
 
 const ClientList = () => {
     const [users, setUsers] = useState([]);
@@ -116,7 +116,7 @@ const ClientList = () => {
                   <TableCell align="left">{user.name}</TableCell>
                   <TableCell align="right">{user.bankaccount}</TableCell>
                   <TableCell align="right">{user.usertype}</TableCell>
-                  <TableCell align="right">{employee.age}</TableCell>
+                  <TableCell align="right">{user.age}</TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
@@ -157,7 +157,6 @@ const ClientList = () => {
           </Table>
         </TableContainer>
     );
-
 };
 
 export default ClientList;

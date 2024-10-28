@@ -11,16 +11,19 @@ import SaveIcon from "@mui/icons-material/Save";
 const AddEditClient = () => {
     const [rut, setRut] = useState("");
     const [name, setName] = useState("");
-    const [salary, setSalary] = useState("");
+    const [income, setIncome] = useState("");
     const [usertype, setUserType] = useState("");
     const [age, setAge] = useState("");
     const [timeinwork, setTimeInWork] = useState("");
     const [bankaccount, setBankAccount] = useState("");
     const [creation, SetCreation] = useState("");
-    const [credithistory, SetCreditHistory] = useState("");
+    const [credithistory, SetCreditHistory] = useState(false);
     const [debts, SetDebts] = useState("");
-    const [files, SetFiles] = useState("");
+    const [files, SetFiles] = useState(false);
     const [titleClientForm, setTitleClientForm] = useState("");
+    const [movements, setMovements] = useState("");
+    const [movmntsdate, setMovmntsDate] = useState("");
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -28,8 +31,8 @@ const AddEditClient = () => {
         e.preventDefault();
 
         const user = {rut, name, salary, usertype, age, timeinwork, bankaccount
-            , creation, credithistory, debts, files, id
-        }
+            , creation, credithistory, debts, files, movements, movmntsdate, id
+        };
         if(id){
             userService
             .update(user)
@@ -68,7 +71,7 @@ const AddEditClient = () => {
             .then((user) => {
                 setRut(user.data.rut);
                 setName(user.data.name);
-                setSalary(user.data.salary);
+                setIncome(user.data.income);
                 setUserType(user.data.usertype);
                 setAge(user.data.usertype);
                 setTimeInWork(user.data.timeinwork);
@@ -77,6 +80,9 @@ const AddEditClient = () => {
                 SetCreditHistory(user.data.credithistory);
                 SetDebts(user.data.debts);
                 SetFiles(user.data.files);
+                setMovements(user.data.movements);
+                setMovmntsDate(user.data.movmntsdate);
+
             })
             .catch((error) => {
                 console.log("Se ha producido un error.", error);
@@ -121,12 +127,12 @@ const AddEditClient = () => {
 
                 <FormControl fullWidth>
                     <TextField
-                        id="salary"
-                        label="Salary"
+                        id="income"
+                        label="Income"
                         type="number"
                         value={salary}
                         variant="standard"
-                        onChange={(e) => setSalary(e.target.value)}
+                        onChange={(e) => setIncome(e.target.value)}
                         helperText="Salario mensual en Pesos Chilenos"
                     />
                 </FormControl>
@@ -202,8 +208,7 @@ const AddEditClient = () => {
                         value={credithistory}
                         select
                         variant="standard"
-                        defaultValue="si"
-                        onChange={(e) => SetCreditHistory(e.target.value)}
+                        onChange={(e) => SetCreditHistory(e.target.value == "true")}
                     >
                         <MenuItem value={"true"}>si</MenuItem>
                         <MenuItem value={"false"}>no</MenuItem>
@@ -227,9 +232,13 @@ const AddEditClient = () => {
                         id="files"
                         label="files"
                         value={files}
+                        select
                         variant="standard"
-                        onChange={(e) => SetFiles(e.target.value)}
-                    />
+                        onChange={(e) => SetFiles(e.target.value == "true")}
+                    >
+                        <MenuItem value={"true"}>subidos</MenuItem>
+                        <MenuItem value={"false"}>no subidos</MenuItem>
+                    </TextField>
                 </FormControl>
 
                 <FormControl>

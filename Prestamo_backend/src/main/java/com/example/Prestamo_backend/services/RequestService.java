@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Service
 public class RequestService {
@@ -29,7 +30,7 @@ public class RequestService {
         return (ArrayList<Request>) requestRepository.findAll();
     }
 
-    public Request getRequestById(Long id){return requestRepository.findById(id).get();}
+    public List<Request> getRequestsByUserId(Long iduser){return requestRepository.findByIduser(iduser);}
 
     public Request updateRequest(Request request){return requestRepository.save(request);}
 
@@ -386,8 +387,13 @@ public class RequestService {
         return Arrays.stream(dt.split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
     }
 
-    public String viewStatus(Long iduser){
-        Request R = requestRepository.findByIduser(iduser);
+    public String viewStatus(Long idRequest){
+        Optional<Request> requestOptional = requestRepository.findById(idRequest);
+        if (requestOptional.isEmpty()) {
+            return "No request found for the given request ID.";
+        }
+        Request R = requestOptional.get();
+
         if (R == null) {
             return "No request found for the given user ID.";
         }

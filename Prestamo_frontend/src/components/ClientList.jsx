@@ -12,6 +12,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import userService from "../services/user.service";
+import AssignmentIcon  from "@mui/icons-material";
 
 const ClientList = () => {
     const [users, setUsers] = useState([]);
@@ -61,6 +62,11 @@ const ClientList = () => {
         console.log("Printing id", id);
         navigate(`/client/edit/${id}`);
     };
+
+    const handleRequest = (id) =>{
+      console.log("Printing id", id);
+      navigate(`/request/list/${id}`);
+    }
 
 
 
@@ -132,6 +138,17 @@ const ClientList = () => {
                       startIcon={<DeleteIcon />}
                     >
                       Eliminar
+                    </Button>
+
+                    <Button
+                      variant = "contained"
+                      color = "inherit"
+                      size = "small"
+                      onClick={() => handleRequest(user.id)}
+                      style = {{ marginleft: "0.5rem"}}
+                      startIcon = {<AssignmentIcon />}
+                    >
+                      Solicitudes
                     </Button>
                   </TableCell>
                 </TableRow>

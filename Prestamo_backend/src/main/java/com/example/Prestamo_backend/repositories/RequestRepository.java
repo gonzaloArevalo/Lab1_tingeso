@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
-    public Request findByIduser(Long iduser);
+    List<Request> findByIduser(Long iduser);
 
     public Request findByRequeststatus(String requeststatus);
 

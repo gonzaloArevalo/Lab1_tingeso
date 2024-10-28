@@ -29,10 +29,10 @@ public class RequestController {
         return ResponseEntity.ok(requests);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Request> getRequestById(@PathVariable Long id){
-        Request idRequest = requestService.getRequestById(id);
-        return ResponseEntity.ok(idRequest);
+    @GetMapping("/user/{iduser}")
+    public ResponseEntity<List<Request>> getRequestsByUserId(@PathVariable Long iduser) {
+        List<Request> userRequests = requestService.getRequestsByUserId(iduser);
+        return ResponseEntity.ok(userRequests);
     }
 
     @DeleteMapping("/{id}")

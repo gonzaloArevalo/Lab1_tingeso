@@ -21,10 +21,11 @@ function App() {
               <Route path="/client/list" element={<ClientList/>} />
               <Route path="/client/add" element={<AddEditClient/>} />
               <Route path="/client/edit/:id" element={<AddEditClient/>} />
-              <Route path="/request/list:id" element={<RequestList/>} />
-              <Route path="/request/add" element={<AddEditRequest/>} />
+              <Route path="/request/list" element={<RequestList showAddButton={false}/>} />
+              <Route path="/request/list/:id" element={<RequestList showAddButton={true}/>} />
+              <Route path="/request/add/:iduser" element={<AddEditRequest/>} />
               <Route path="/request/edit/:id" element={<AddEditRequest/>} />
-              <Route path="/quota/totalcosts" element={<TotalCosts/>} />
+              <Route path="/quota/totalcosts/:id" element={<TotalCosts/>} />
               <Route path="*" element={<NotFound/>} />
             </Routes>
           </div>

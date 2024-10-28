@@ -14,7 +14,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import requestService from "../services/request.service";
 import { useParams } from 'react-router-dom';
 
-const RequestList = ({ userId }) => {
+const RequestList = ({showAddButton, userId }) => {
     const [requests, setRequests] = useState([]);
     const navigate = useNavigate();
 
@@ -81,20 +81,31 @@ const RequestList = ({ userId }) => {
         navigate(`/request/edit/${id}`);
     };
 
+    const handleAddRequest = () => {
+        if (userId) {
+            navigate(`/request/add/${userId}`);
+        } else {
+            navigate('/client/list'); // 
+        }
+    };
+
     return(
         <TableContainer component={Paper}>
             <br />
           <Link
-            to="/request/add"
+            to="/request/add:iduser"
             style={{ textDecoration: "none", marginBottom: "1rem" }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<QueueIcon />}
-            >
-              Añadir solicitud
-            </Button>
+            {showAddButton && (
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    startIcon={<QueueIcon/>}
+                    onClick={handleAddRequest}
+                >
+                    Añadir Solicitud
+                </Button>
+            )}
           </Link>
           <br /> <br />
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -117,7 +128,7 @@ const RequestList = ({ userId }) => {
             <TableBody>
                 {requests.map((request) =>(
                     <TableRow
-                    key={user.id}
+                    key={request.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 }}}
                     >
                         <TableCell align="left">{request.amount}</TableCell>
@@ -129,7 +140,7 @@ const RequestList = ({ userId }) => {
                                 variant="contained"
                                 color="info"
                                 size="small"
-                                onClick={() => handleEdit(user.id)}
+                                onClick={() => handleEdit(request.id)}
                                 style={{ marginLeft: "0.5rem" }}
                                 startIcon={<EditIcon />}
                                 >
@@ -140,7 +151,7 @@ const RequestList = ({ userId }) => {
                                 variant="contained"
                                 color="error"
                                 size="small"
-                                onClick={() => handleDelete(user.id)}
+                                onClick={() => handleDelete(request.id)}
                                 style={{ marginLeft: "0.5rem" }}
                                 startIcon={<DeleteIcon />}
                             >

@@ -6,6 +6,10 @@ const getAllRequests = () => {
     return httpClient.get("/api/v1/request/");
 };
 
+const get = id => {
+    return httpClient.get(`/api/v1/request/${id}`);
+}
+
 const getRequestsByUserId = (iduser) => {
     return httpClient.get(`/api/v1/request/user/${iduser}`);
 };
@@ -38,6 +42,7 @@ const calculateTotalCosts = (request) => {
 
 export default {
     getAllRequests,
+    get,
     getRequestsByUserId,
     deleteRequestById,
     updateRequest,

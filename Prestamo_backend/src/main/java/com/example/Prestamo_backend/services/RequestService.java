@@ -45,7 +45,7 @@ public class RequestService {
         }
     }
 
-    public Request requestloan(Long iduser, int amount, int term, float rate,
+    public Request requestloan(Long iduser, int amount, int term, float rate, String loantype, int propertyvalue,
                                MultipartFile incometicket, MultipartFile credithistorial,
                                MultipartFile appraisalcertificate, MultipartFile deedfirsthome,
                                MultipartFile buisnessstate, MultipartFile buisnessplan,
@@ -63,6 +63,8 @@ public class RequestService {
         newRequest.setRate(rate);
         newRequest.setRequeststatus("initial review");
         newRequest.setDateloan(new Date());
+        newRequest.setLoantype(loantype);
+        newRequest.setPropertyvalue(propertyvalue);
         newRequest.setIncometicket(incometicket.getBytes());
         newRequest.setCredithistorial(credithistorial.getBytes());
         newRequest.setAppraisalcertificate(appraisalcertificate.getBytes());

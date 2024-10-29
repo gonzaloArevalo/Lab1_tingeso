@@ -58,6 +58,8 @@ public class RequestController {
                                                @RequestParam int amount,
                                                @RequestParam int term,
                                                @RequestParam float rate,
+                                               @RequestParam String loantype,
+                                               @RequestParam int Propertyvalue,
                                                @RequestPart MultipartFile incometicket,
                                                @RequestPart(required = false) MultipartFile credithistorial,
                                                @RequestPart(required = false) MultipartFile appraisalcertificate,
@@ -68,7 +70,7 @@ public class RequestController {
                                                @RequestPart(required = false) MultipartFile appcertificatenew){
         try{
             //File convertedFile = convertMultipartFileToFile(document);
-            Request newRequest = requestService.requestloan(iduser,amount,term,rate,incometicket, credithistorial, appraisalcertificate,
+            Request newRequest = requestService.requestloan(iduser,amount,term,rate,loantype,Propertyvalue,incometicket, credithistorial, appraisalcertificate,
                     deedfirsthome, buisnessstate, buisnessplan,
                     rembudget, appcertificatenew);
             return ResponseEntity.ok(newRequest);

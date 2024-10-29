@@ -17,8 +17,8 @@ const AddEditRequest = () => {
     const [amount, setAmount] = useState("");
     const [term, setTerm] = useState("");
     const [rate, setRate] = useState("");
-    const [propertyValue, setPropertyValue] = useState("");
     const [loanType, setLoanType] = useState("");
+    const [propertyValue, setPropertyValue] = useState("");
     const [incomeTicket, setIncomeTicket] = useState(null);
     const [creditHistorial, setCreditHistorial] = useState(null);
     const [appraisalCertificate, setAppraisalCertificate] = useState(null);
@@ -40,8 +40,8 @@ const AddEditRequest = () => {
         formData.append("amount", amount);
         formData.append("term", term);
         formData.append("rate", rate);
-        formData.append("propertyValue", propertyValue);
         formData.append("loanType", loanType);
+        formData.append("propertyValue", propertyValue);
 
         if (incomeTicket) formData.append("incomeTicket", incomeTicket);
         if (creditHistorial) formData.append("creditHistorial", creditHistorial);
@@ -95,9 +95,9 @@ const AddEditRequest = () => {
                 setAmount(data.amount);
                 setTerm(data.term);
                 setRate(data.rate);
-                setPropertyValue(data.propertyvalue);
                 setLoanType(data.loantype);
-
+                setPropertyValue(data.propertyvalue);
+                
             })
             .catch((error) => {
                 console.log("Error al cargar los datos de la solicitud:", error);

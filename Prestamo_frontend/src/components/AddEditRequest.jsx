@@ -19,8 +19,6 @@ const AddEditRequest = () => {
     const [rate, setRate] = useState("");
     const [propertyValue, setPropertyValue] = useState("");
     const [loanType, setLoanType] = useState("");
-    const [dateLoan, setDateLoan] = useState("");
-    const [savingAbility, setSavingAbility] = useState("");
     const [incomeTicket, setIncomeTicket] = useState(null);
     const [creditHistorial, setCreditHistorial] = useState(null);
     const [appraisalCertificate, setAppraisalCertificate] = useState(null);
@@ -44,8 +42,6 @@ const AddEditRequest = () => {
         formData.append("rate", rate);
         formData.append("propertyValue", propertyValue);
         formData.append("loanType", loanType);
-        formData.append("dateLoan", dateLoan);
-        formData.append("savingAbility", savingAbility);
 
         if (incomeTicket) formData.append("incomeTicket", incomeTicket);
         if (creditHistorial) formData.append("creditHistorial", creditHistorial);
@@ -101,10 +97,7 @@ const AddEditRequest = () => {
                 setRate(data.rate);
                 setPropertyValue(data.propertyvalue);
                 setLoanType(data.loantype);
-                setSavingAbility(data.savingability);
 
-                const formattedDateLoan = new Date(data.dateloan).toISOString().split("T")[0];
-                setDateLoan(formattedDateLoan);
             })
             .catch((error) => {
                 console.log("Error al cargar los datos de la solicitud:", error);
@@ -195,20 +188,6 @@ const AddEditRequest = () => {
                     <MenuItem value={"remodelation"}>Remodelacion</MenuItem>
 
                 </TextField>
-            </FormControl>
-
-            <FormControl fullWidth margin="normal">
-                <TextField
-                    id="dateLoan"
-                    label="Fecha del Préstamo"
-                    type="date"
-                    value={dateLoan}
-                    onChange={(e) => setDateLoan(e.target.value)}
-                    variant="standard"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
             </FormControl>
 
             <FormControl fullWidth margin="normal">

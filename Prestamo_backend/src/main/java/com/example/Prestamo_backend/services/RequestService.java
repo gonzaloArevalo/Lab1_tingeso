@@ -32,6 +32,8 @@ public class RequestService {
 
     public List<Request> getRequestsByUserId(Long iduser){return requestRepository.findByIduser(iduser);}
 
+    public Request getRequestById(Long id) { return requestRepository.findById(id).orElse(null);}
+
     public Request updateRequest(Request request){return requestRepository.save(request);}
 
     public boolean deleteRequestById(long id) throws Exception{

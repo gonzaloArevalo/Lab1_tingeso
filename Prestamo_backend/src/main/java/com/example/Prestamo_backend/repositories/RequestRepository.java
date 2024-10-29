@@ -10,6 +10,8 @@ import java.util.List;
 public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findByIduser(Long iduser);
 
+
+
     public Request findByRequeststatus(String requeststatus);
 
     public Request findByAmount(int amount);

@@ -24,12 +24,9 @@ public class User {
     private String rut;
     private String usertype;
     private Date age;
-    private Date timeinbank;
     private Date timeinwork; //time that the user has been working
     private int bankaccount;
     private Date creation; //date of creation of the account
-    private Date retire; //date of retire of money from the account
-    private int moneyout;
     private boolean credithistory;
     private int debts; //total debts from the user
     private int income; //income of the user

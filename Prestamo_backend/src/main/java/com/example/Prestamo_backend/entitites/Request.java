@@ -20,20 +20,16 @@ public class Request {
 
     @Column(name = "iduser")
     private Long iduser;
-    private Date requestdate;
     private String requeststatus;
     private int amount;
     private int term;
     private float rate;
     private double propertyvalue;
-    private boolean credithistory;
     private String loantype;
     private Date dateloan;
     private int quota;
     private String savingability;
 
-    @Lob
-    private byte[] document;
     @Lob
     private byte[] incometicket;
     @Lob

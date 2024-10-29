@@ -35,6 +35,12 @@ public class RequestController {
         return ResponseEntity.ok(userRequests);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Request> getRequestById(@PathVariable Long id){
+        Request request = requestService.getRequestById(id);
+        return ResponseEntity.ok(request);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Request> deleteRequestById(@PathVariable Long id) throws Exception{
         var isDeleted = requestService.deleteRequestById(id);

@@ -12,6 +12,7 @@ import QueueIcon from '@mui/icons-material/Queue';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import requestService from "../services/request.service";
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import { useParams } from 'react-router-dom';
 
 const RequestList = ({showAddButton, userId }) => {
@@ -89,6 +90,10 @@ const RequestList = ({showAddButton, userId }) => {
         }
     };
 
+    const handleTotalCosts = (id) => {
+        navigate(`/quota/totalcosts/${id}`);
+    };
+
     return(
         <TableContainer component={Paper}>
             <br />
@@ -156,6 +161,17 @@ const RequestList = ({showAddButton, userId }) => {
                                 startIcon={<DeleteIcon />}
                             >
                                 Eliminar
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                onClick={() => handleTotalCosts(request.id)}
+                                style={{ marginLeft: "0.5rem" }}
+                                startIcon={<EventNoteIcon/>}
+                            >
+                                Costos Totales
                             </Button>
                         </TableCell>
                     </TableRow>

@@ -52,8 +52,34 @@ public class RequestService {
                                MultipartFile rembudget, MultipartFile appcertificatenew) throws IOException{
         User user = userRepository.findById(iduser).orElseThrow(()->new IllegalArgumentException("User not found"));
 
-        if(incometicket==null){
-            throw new IllegalArgumentException("there is no documents");
+
+        boolean fulldocuments;
+
+        switch(loantype.toLowerCase()){
+            case "first living":
+                fulldocuments = incometicket != null && !incometicket.isEmpty() &&
+                        credithistorial != null && !credithistorial.isEmpty() &&
+                        appraisalcertificate != null && !appraisalcertificate.isEmpty();
+                break;
+            case "second living":
+                fulldocuments = buisnessstate != null && !buisnessstate.isEmpty() &&
+                        incometicket != null && !incometicket.isEmpty() &&
+                        appraisalcertificate != null && !appraisalcertificate.isEmpty() &&
+                        buisnessplan != null && !buisnessplan.isEmpty();
+                break;
+            case "commercial properties":
+                fulldocuments = buisnessstate != null && !buisnessstate.isEmpty() &&
+                        incometicket != null && !incometicket.isEmpty() &&
+                        appraisalcertificate != null && !appraisalcertificate.isEmpty() &&
+                        buisnessplan != null && !buisnessplan.isEmpty();
+                break;
+            case "remodelation":
+                fulldocuments = incometicket != null && !incometicket.isEmpty() &&
+                        rembudget != null && !rembudget.isEmpty() &&
+                        appcertificatenew != null && !appcertificatenew.isEmpty();
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown loan type");
         }
 
         Request newRequest = new Request();
@@ -61,25 +87,39 @@ public class RequestService {
         newRequest.setIduser(iduser);
         newRequest.setTerm(term);
         newRequest.setRate(rate);
-        newRequest.setRequeststatus("initial review");
         newRequest.setDateloan(new Date());
         newRequest.setLoantype(loantype);
         newRequest.setPropertyvalue(propertyvalue);
-        newRequest.setIncometicket(incometicket.getBytes());
-        newRequest.setCredithistorial(credithistorial.getBytes());
-        newRequest.setAppraisalcertificate(appraisalcertificate.getBytes());
-        newRequest.setDeedfirsthome(deedfirsthome.getBytes());
-        newRequest.setBuisnessstate(buisnessstate.getBytes());
-        newRequest.setBuisnessplan(buisnessplan.getBytes());
-        newRequest.setRembudget(rembudget.getBytes());
-        newRequest.setAppcertificatenew(appcertificatenew.getBytes());
+        newRequest.setIncometicket(incometicket != null ? incometicket.getBytes() : null);
+        newRequest.setCredithistorial(credithistorial != null ? credithistorial.getBytes() : null);
+        newRequest.setAppraisalcertificate(appraisalcertificate != null ? appraisalcertificate.getBytes() : null);
+        newRequest.setDeedfirsthome(deedfirsthome != null ? deedfirsthome.getBytes() : null);
+        newRequest.setBuisnessstate(buisnessstate != null ? buisnessstate.getBytes() : null);
+        newRequest.setBuisnessplan(buisnessplan != null ? buisnessplan.getBytes() : null);
+        newRequest.setRembudget(rembudget != null ? rembudget.getBytes() : null);
+        newRequest.setAppcertificatenew(appcertificatenew != null ? appcertificatenew.getBytes() : null);
+
+        if (fulldocuments) {
+            newRequest.setRequeststatus("initial review");
+        }
+        else{
+            newRequest.setRequeststatus("pending documentation");
+        }
+
+
 
         return requestRepository.save(newRequest);
     }
 
     public String RequestEvaluation(Long idrequest){
         Request request = requestRepository.findById(idrequest).orElseThrow(() -> new IllegalArgumentException("Request not found"));
+
+        if (!"initial review".equalsIgnoreCase(request.getRequeststatus())) {
+            return "Request cannot be evaluated as it is not in 'initial review' status.";
+        }
+
         request.setRequeststatus("under evaluation");
+        request.setQuota(calculatequota(request)); //this assign the quota
         requestRepository.save(request);
 
         String Savingcapacity;
@@ -120,6 +160,9 @@ public class RequestService {
             requestRepository.save(request);
             return "the request has been rejected for having advanced age";
         }
+
+        request.setRequeststatus("pre-approved");
+        requestRepository.save(request);
 
         if(validatesalary(request)){
             savcapacity++;
@@ -177,11 +220,11 @@ public class RequestService {
 
     private boolean unpaiddebts(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if(user.isCredithistory() && user.getDebts() != 0){
-            return false;
+        if(user.isCredithistory()){
+            return true;
         }
         else{
-            return true;
+            return false;
         }
     }
 
@@ -228,7 +271,7 @@ public class RequestService {
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         int age0 = obtainAge(user.getAge());
         int age = age0 + request.getTerm();
-        if(age > 75){
+        if(age > 75 || age0 == 0){
             return false;
         }
         return (75 - age) >= 5;
@@ -253,10 +296,11 @@ public class RequestService {
     }
 
     private double calculatequota(Request request){
-        int menterm = request.getTerm() * 12;
-        float rt = request.getRate();
+        int menterm = request.getTerm() * 12; //from years to months
+        float rt = request.getRate()/100/12; //from interanual to monthly
         double factor = Math.pow(1 + rt, menterm);
-        double qtamen = (request.getAmount() * menterm * factor) / (factor - 1);
+        double numerator = request.getAmount() * factor * rt;
+        double qtamen = (numerator) / (factor - 1);
 
         return qtamen;
     }
@@ -273,7 +317,7 @@ public class RequestService {
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         LocalDate today = LocalDate.now();
         LocalDate twelvemonths = today.minusMonths(12);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
         List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
@@ -291,7 +335,7 @@ public class RequestService {
                     return false;
                 }
                 //if there was a withdrawal and that withdraw was superior to the 50% of user account
-                if(actualmov < 0 && Math.abs(actualmov) > 0.5 * user.getBankaccount()){
+                if(actualmov < 0 && Math.abs(actualmov) > 0.5 * balance){
                     return false;
                 }
             }
@@ -303,7 +347,7 @@ public class RequestService {
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         LocalDate today = LocalDate.now();
         LocalDate twelvemonths = today.minusMonths(12);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
         List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
@@ -318,13 +362,17 @@ public class RequestService {
             int actualmov = mov.get(i);
 
             if(actualmov > 0 && actualdt.isAfter(twelvemonths) && actualdt.isBefore(today)){
-                if (lastAddedDate == null || actualdt.isAfter(lastAddedDate.plusMonths(1))){
-                    dtmonthly.add(actualdt);
-                    lastAddedDate = actualdt;
-                    if(actualmov < minbank){
+
+                if(actualmov < minbank){
+                    return false;
+                }
+                if(lastAddedDate != null){
+                    long monthsDifference = java.time.temporal.ChronoUnit.MONTHS.between(lastAddedDate, actualdt);
+                    if (monthsDifference != 1 && monthsDifference != 3) {
                         return false;
                     }
                 }
+                lastAddedDate = actualdt;
             }
         }
         return true;
@@ -347,7 +395,7 @@ public class RequestService {
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         LocalDate today = LocalDate.now();
         LocalDate sixmonths = today.minusMonths(6);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
         List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
@@ -359,17 +407,20 @@ public class RequestService {
             int actualmov = mov.get(i);
 
             if (actualdt.isAfter(sixmonths) && actualdt.isBefore(today)){
-                if(actualmov < 0){
-                    if(Math.abs(actualmov) > 0.3 * balance){
-                        return false;
-                    }
+                if(actualmov < 0 && Math.abs(actualmov) > 0.3 * balance){
+                    return false;
                 }
+
+                balance = balance + actualmov;
             }
         }
         return true;
     }
 
     private int calculateyears(Date date){
+        if (date == null) {
+            return 0;
+        }
         Calendar init = Calendar.getInstance();
         init.setTime(date);
 
@@ -382,25 +433,12 @@ public class RequestService {
         return years;
     }
 
-    private List<Integer> strtolst(String mov){
-        return Arrays.stream(mov.split(",")).map(Integer::parseInt).collect(Collectors.toList());
-    }
-
-    private List<LocalDate> strtodt(String dt){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return Arrays.stream(dt.split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
-    }
-
     public String viewStatus(Long idRequest){
         Optional<Request> requestOptional = requestRepository.findById(idRequest);
         if (requestOptional.isEmpty()) {
             return "No request found for the given request ID.";
         }
         Request R = requestOptional.get();
-
-        if (R == null) {
-            return "No request found for the given user ID.";
-        }
 
         if (R.getRequeststatus() == null) {
             return "The request has no defined status.";
@@ -412,27 +450,19 @@ public class RequestService {
             case "pending documentation":
                 return "The application is on hold because one or more are missing important documents or additional customer information is required.";
             case "under evaluation":
-                return ("The application has passed the initial review and is being evaluated " +
-                        "by an executive. At this stage, the executive makes the different evaluations according to " +
-                        "the established rules. For example, documents are analyzed, the relationship is calculated fee/income, " +
-                        "credit history is consulted, payment capacity is verified, etc.");
+                return "The application has passed initial review and is under evaluation. The executive performs evaluations, including document analysis, fee/income ratio calculation, credit history check, and payment capacity verification.";
             case "pre-approved":
-                return ("The application has been evaluated and meets the basic criteria of the bank, so " +
-                        "it has been pre-approved. In this state, the conditions are present Initial credit to the customer.");
+                return "The application has been evaluated and meets basic bank criteria, and is therefore pre-approved. Initial credit conditions are presented to the customer.";
             case "final approval":
-                return ("The client has accepted the proposed conditions, and the application is in the final approval " +
-                        "process. Here are the details finals, contracts are issued, and legal documents are prepared.");
+                return "The client has accepted the proposed conditions, and the application is in final approval. Final details are reviewed, contracts issued, and legal documents prepared.";
             case "approved":
-                return ("The application has been approved and is ready for disbursement. The customer you receive " +
-                        "confirmation and the contract is scheduled to be signed.");
+                return "The application is approved and ready for disbursement. The customer receives confirmation and the contract signing is scheduled.";
             case "rejected":
-                return ("The application has been evaluated and, after analysis, does not comply with the requirements " +
-                        "of the criteria established by the bank. The customer receives a notification with the reason for the rejection.");
+                return "The application has been evaluated and does not meet the bank's criteria. The customer is notified with the reason for rejection.";
             case "canceled":
-                return ("The customer has decided to cancel the request before this is approved. This can happen at any stage of the process.");
-            case "disbursment":
-                return ("The application has been approved and the process of disbursement of the approved amount. " +
-                        "This includes transferring funds to the customer or the seller of the property.");
+                return "The customer canceled the request before approval. This can happen at any stage of the process.";
+            case "disbursement":
+                return "The application is approved, and disbursement is in progress. Funds are transferred to the customer or the property seller.";
             default:
                 return "Unknown request status.";
         }

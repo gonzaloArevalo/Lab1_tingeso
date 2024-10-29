@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class UserService {
@@ -96,10 +100,37 @@ public class UserService {
 
     public User register(User user){
         if(rutverification(user.getRut()) && user.isFiles()){
+
+            String movements = generateRandomMovements();
+            String movementDates = generateMovementDates();
+
+            user.setMovements(movements);
+            user.setMovmntsdate(movementDates);
+
             return userRepository.save(user);
         }
         else{
             throw new IllegalArgumentException("non valid RUT or no documents");
         }
+    }
+
+    private String generateRandomMovements() {
+        Random random = new Random();
+        List<Integer> movementList = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            movementList.add(random.nextInt(1001) - 500); // range between -500 y 500
+        }
+        return String.join(",", movementList.stream().map(String::valueOf).toArray(String[]::new));
+    }
+
+    private String generateMovementDates() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate today = LocalDate.now();
+        List<String> dateList = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            LocalDate date = today.minusMonths(i);
+            dateList.add(date.format(formatter));
+        }
+        return String.join(",", dateList);
     }
 }

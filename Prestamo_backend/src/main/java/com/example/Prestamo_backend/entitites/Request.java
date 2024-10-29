@@ -27,7 +27,7 @@ public class Request {
     private double propertyvalue;
     private String loantype;
     private Date dateloan;
-    private int quota;
+    private double quota;
     private String savingability;
 
     @Lob

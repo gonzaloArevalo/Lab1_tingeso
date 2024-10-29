@@ -49,7 +49,7 @@ const AddEditClient = () => {
         }
         else{
             userService
-            .create(user)
+            .register(user)
             .then((response) => {
                 console.log("usuario ha sido añadido.", response.data);
                 navigate("/client/list");

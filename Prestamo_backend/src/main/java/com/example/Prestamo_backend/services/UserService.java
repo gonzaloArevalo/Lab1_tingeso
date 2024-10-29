@@ -94,24 +94,14 @@ public class UserService {
         return M;
     }
 
-    public boolean rutverification(String rut){
-        return rut != null && !rut.isEmpty();
-    }
+    public User register(User user) {
+        String movements = generateRandomMovements();
+        String movementDates = generateMovementDates();
 
-    public User register(User user){
-        if(rutverification(user.getRut()) && user.isFiles()){
+        user.setMovements(movements);
+        user.setMovmntsdate(movementDates);
 
-            String movements = generateRandomMovements();
-            String movementDates = generateMovementDates();
-
-            user.setMovements(movements);
-            user.setMovmntsdate(movementDates);
-
-            return userRepository.save(user);
-        }
-        else{
-            throw new IllegalArgumentException("non valid RUT or no documents");
-        }
+        return userRepository.save(user);
     }
 
     private String generateRandomMovements() {

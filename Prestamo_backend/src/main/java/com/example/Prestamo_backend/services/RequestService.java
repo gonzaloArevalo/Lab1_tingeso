@@ -328,7 +328,7 @@ public class RequestService {
             LocalDate actualdt = dt.get(i);
             int actualmov = mov.get(i);
 
-            if(actualdt.isAfter(twelvemonths) && actualdt.isBefore(today)){
+            if(!actualdt.isBefore(twelvemonths) && !actualdt.isAfter(today)){
                 balance = balance + actualmov;
 
                 if(balance <= 0){
@@ -361,7 +361,7 @@ public class RequestService {
             LocalDate actualdt = dt.get(i);
             int actualmov = mov.get(i);
 
-            if(actualmov > 0 && actualdt.isAfter(twelvemonths) && actualdt.isBefore(today)){
+            if(actualmov > 0 && !actualdt.isBefore(twelvemonths) && !actualdt.isAfter(today)){
 
                 if(actualmov < minbank){
                     return false;
@@ -406,7 +406,7 @@ public class RequestService {
             LocalDate actualdt = dt.get(i);
             int actualmov = mov.get(i);
 
-            if (actualdt.isAfter(sixmonths) && actualdt.isBefore(today)){
+            if (!actualdt.isBefore(sixmonths) && !actualdt.isAfter(today)){
                 if(actualmov < 0 && Math.abs(actualmov) > 0.3 * balance){
                     return false;
                 }

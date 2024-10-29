@@ -36,21 +36,21 @@ const AddEditRequest = () => {
 
         const formData = new FormData();
         formData.append("iduser", iduser);
-        formData.append("requestStatus", requestStatus);
+        formData.append("requeststatus", requestStatus);
         formData.append("amount", amount);
         formData.append("term", term);
         formData.append("rate", rate);
         formData.append("loanType", loanType);
-        formData.append("propertyValue", propertyValue);
+        formData.append("propertyvalue", propertyValue);
 
-        if (incomeTicket) formData.append("incomeTicket", incomeTicket);
-        if (creditHistorial) formData.append("creditHistorial", creditHistorial);
-        if (appraisalCertificate) formData.append("appraisalCertificate", appraisalCertificate);
-        if (deedFirstHome) formData.append("deedFirstHome", deedFirstHome);
-        if (businessState) formData.append("businessState", businessState);
-        if (businessPlan) formData.append("businessPlan", businessPlan);
-        if (remBudget) formData.append("remBudget", remBudget);
-        if (appCertificateNew) formData.append("appCertificateNew", appCertificateNew);
+        if (incomeTicket) formData.append("incometicket", incomeTicket);
+        if (creditHistorial) formData.append("credithistorial", creditHistorial);
+        if (appraisalCertificate) formData.append("appraisalcertificate", appraisalCertificate);
+        if (deedFirstHome) formData.append("deedfirstHome", deedFirstHome);
+        if (businessState) formData.append("businessstate", businessState);
+        if (businessPlan) formData.append("businessplan", businessPlan);
+        if (remBudget) formData.append("rembudget", remBudget);
+        if (appCertificateNew) formData.append("appcertificateNew", appCertificateNew);
 
         if(id){
             requestService
@@ -161,7 +161,7 @@ const AddEditRequest = () => {
 
             <FormControl fullWidth margin="normal">
                 <TextField
-                    id="propertyValue"
+                    id="propertyvalue"
                     label="Valor de la Propiedad"
                     type="number"
                     value={propertyValue}
@@ -172,7 +172,7 @@ const AddEditRequest = () => {
 
             <FormControl fullWidth margin="normal">
                 <TextField
-                    id="loanType"
+                    id="loantype"
                     label="Tipo de Préstamo"
                     type="text"
                     value={loanType}

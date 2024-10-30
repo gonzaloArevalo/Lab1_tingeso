@@ -29,11 +29,11 @@ const requestLoan = (formData) => {
 };
 
 const evaluateRequest = (idrequest) => {
-    return httpClient.get(`/api/v1/request/evaluate`, { params: { idrequest } });
+    return httpClient.get(`/api/v1/request/evaluate/${idrequest}`);
 };
 
-const viewStatus = (iduser) => {
-    return httpClient.get(`/api/v1/request/status`, { params: { iduser } });
+const viewStatus = (id) => {
+    return httpClient.get(`/api/v1/request/status`, { params: { id } });
 };
 
 const calculateTotalCosts = (request) => {

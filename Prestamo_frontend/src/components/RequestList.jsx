@@ -13,10 +13,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import requestService from "../services/request.service";
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import { useParams } from 'react-router-dom';
 
 const RequestList = ({showAddButton, userId }) => {
     const [requests, setRequests] = useState([]);
+    const [evaluationMessage, setEvaluationMessage] = useState("");
+    const [statusMessage, setStatusMessage] = useState("");
     const navigate = useNavigate();
 
     const init = () => {
@@ -94,6 +97,29 @@ const RequestList = ({showAddButton, userId }) => {
         navigate(`/quota/totalcosts/${id}`);
     };
 
+    const handleEvaluate = (id) => {
+        requestService.evaluateRequest(id)
+            .then((response) => {
+                console.log("Evaluación completada:", response.data);
+                setEvaluationMessage(response.data);
+            })
+            .catch((error) => {
+                console.log("Error al intentar evaluar la solicitud:", error);
+            });
+    };
+
+    const handleState = (id) => {
+        requestService.viewStatus(id)
+            .then((response) => {
+                console.log("Estado de la solicitud:", response.data);
+                setStatusMessage(response.data);
+            })
+            .catch((error) => {
+                console.log("Error al intentar obtener el estado de la solicitud:", error);
+                setStatusMessage("Error al obtener el estado");
+            });
+    };
+
     return(
         <TableContainer component={Paper}>
             <br />
@@ -113,6 +139,7 @@ const RequestList = ({showAddButton, userId }) => {
             )}
           </Link>
           <br /> <br />
+          {statusMessage && <p>{statusMessage}</p>}
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
                 <TableRow>
@@ -167,12 +194,37 @@ const RequestList = ({showAddButton, userId }) => {
                                 variant="contained"
                                 color="success"
                                 size="small"
+                                onClick={() => handleEvaluate(request.id)}
+                                style={{ marginLeft: "0.5rem" }}
+                                startIcon={<AssessmentIcon/>}
+                            >
+                                Evaluar
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                onClick={() => handleState(request.id)}
+                                style={{ marginLeft: "0.5rem" }}
+                                startIcon={<AssessmentIcon/>}
+                            >
+                                Estado
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
                                 onClick={() => handleTotalCosts(request.id)}
                                 style={{ marginLeft: "0.5rem" }}
                                 startIcon={<EventNoteIcon/>}
                             >
                                 Costos Totales
                             </Button>
+
+                            {evaluationMessage && <p>{evaluationMessage}</p>}
+
                         </TableCell>
                     </TableRow>
                 ))}

@@ -84,7 +84,7 @@ public class RequestController {
     }
 
     @GetMapping("/evaluate")
-    public ResponseEntity<String> evaluateRequest(@RequestParam Long idrequest){
+    public ResponseEntity<String> evaluateRequest(@PathVariable Long idrequest){
         try{
             String evaluationResult = requestService.RequestEvaluation(idrequest);
             return ResponseEntity.ok(evaluationResult);
@@ -95,9 +95,9 @@ public class RequestController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<String> viewStatus(@RequestParam Long iduser){
+    public ResponseEntity<String> viewStatus(@RequestParam Long id){
         try{
-            String state = requestService.viewStatus(iduser);
+            String state = requestService.viewStatus(id);
             return ResponseEntity.ok(state);
         }
         catch(IllegalArgumentException e){

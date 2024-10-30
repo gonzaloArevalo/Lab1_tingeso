@@ -26,8 +26,6 @@ public class UserService {
 
     public User getUserById(Long id){ return userRepository.findById(id).get();}
 
-    public User getUserByRut(String rut){ return userRepository.findByRut(rut);}
-
     public User updateUser(User user){ return userRepository.save(user);}
 
     public boolean deleteUser(Long id) throws Exception{

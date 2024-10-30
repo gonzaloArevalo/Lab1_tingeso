@@ -20,8 +20,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByCreationGreaterThanEqual(Date creation);
     List<User> findByCreationLessThan(Date creation);
-
-    List<User> findByRetireGreaterThanEqual(Date retire);
-    List<User> findByRetireLessThan (Date retire);
-
 }

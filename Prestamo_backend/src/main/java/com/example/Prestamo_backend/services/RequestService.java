@@ -62,10 +62,10 @@ public class RequestService {
                         appraisalcertificate != null && !appraisalcertificate.isEmpty();
                 break;
             case "second living":
-                fulldocuments = buisnessstate != null && !buisnessstate.isEmpty() &&
+                fulldocuments = deedfirsthome != null && !deedfirsthome.isEmpty() &&
                         incometicket != null && !incometicket.isEmpty() &&
                         appraisalcertificate != null && !appraisalcertificate.isEmpty() &&
-                        buisnessplan != null && !buisnessplan.isEmpty();
+                        credithistorial != null && !credithistorial.isEmpty();
                 break;
             case "commercial properties":
                 fulldocuments = buisnessstate != null && !buisnessstate.isEmpty() &&
@@ -319,8 +319,8 @@ public class RequestService {
         LocalDate twelvemonths = today.minusMonths(12);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
-        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
+        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(movement -> Integer.parseInt(movement.trim())).collect(Collectors.toList());
+        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date.trim(), formatter)).collect(Collectors.toList());
 
         int balance = user.getBankaccount();
 
@@ -349,8 +349,8 @@ public class RequestService {
         LocalDate twelvemonths = today.minusMonths(12);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
-        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
+        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(movement -> Integer.parseInt(movement.trim())).collect(Collectors.toList());
+        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date.trim(), formatter)).collect(Collectors.toList());
 
         int minbank = (int) (0.05 * user.getIncome());
 
@@ -397,8 +397,8 @@ public class RequestService {
         LocalDate sixmonths = today.minusMonths(6);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(Integer::parseInt).collect(Collectors.toList());
-        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date, formatter)).collect(Collectors.toList());
+        List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(movement -> Integer.parseInt(movement.trim())).collect(Collectors.toList());
+        List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date.trim(), formatter)).collect(Collectors.toList());
 
         int balance = user.getBankaccount();
 

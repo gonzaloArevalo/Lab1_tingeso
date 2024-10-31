@@ -34,6 +34,75 @@ public class RequestService {
     public Request getRequestById(Long id) { return requestRepository.findById(id).orElse(null);}
     public Request updateRequest(Request request){return requestRepository.save(request);}
 
+    public Request buildRequestFromParams(
+            Long id, Integer amount, Integer term, Float rate,
+            String loanType, Integer propertyValue, MultipartFile incomeTicket,
+            MultipartFile creditHistorial, MultipartFile appraisalCertificate,
+            MultipartFile deedFirstHome, MultipartFile businessState,
+            MultipartFile businessPlan, MultipartFile remBudget, MultipartFile appCertificateNew
+    ) {
+        Request request = new Request();
+        request.setId(id);
+        request.setAmount(amount);
+        request.setTerm(term);
+        request.setRate(rate);
+        request.setLoantype(loanType);
+        request.setPropertyvalue(propertyValue);
+        request.setDateloan(new Date());
+
+        boolean fulldocuments;
+
+        switch(loanType.toLowerCase()){
+            case "first living":
+                fulldocuments = incomeTicket != null && !incomeTicket.isEmpty() &&
+                        creditHistorial != null && !creditHistorial.isEmpty() &&
+                        appraisalCertificate != null && !appraisalCertificate.isEmpty();
+                break;
+            case "second living":
+                fulldocuments = deedFirstHome != null && !deedFirstHome.isEmpty() &&
+                        incomeTicket != null && !incomeTicket.isEmpty() &&
+                        appraisalCertificate != null && !appraisalCertificate.isEmpty() &&
+                        creditHistorial != null && !creditHistorial.isEmpty();
+                break;
+            case "commercial properties":
+                fulldocuments = businessState != null && !businessState.isEmpty() &&
+                        incomeTicket != null && !incomeTicket.isEmpty() &&
+                        appraisalCertificate != null && !appraisalCertificate.isEmpty() &&
+                        businessPlan != null && !businessPlan.isEmpty();
+                break;
+            case "remodelation":
+                fulldocuments = incomeTicket != null && !incomeTicket.isEmpty() &&
+                        remBudget != null && !remBudget.isEmpty() &&
+                        appCertificateNew != null && !appCertificateNew.isEmpty();
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown loan type");
+        }
+
+        try {
+            if (incomeTicket != null) request.setIncometicket(incomeTicket.getBytes());
+            if (creditHistorial != null) request.setCredithistorial(creditHistorial.getBytes());
+            if (appraisalCertificate != null) request.setAppraisalcertificate(appraisalCertificate.getBytes());
+            if (deedFirstHome != null) request.setDeedfirsthome(deedFirstHome.getBytes());
+            if (businessState != null) request.setBuisnessstate(businessState.getBytes());
+            if (businessPlan != null) request.setBuisnessplan(businessPlan.getBytes());
+            if (remBudget != null) request.setRembudget(remBudget.getBytes());
+            if (appCertificateNew != null) request.setAppcertificatenew(appCertificateNew.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error");
+        }
+
+        if (fulldocuments) {
+            request.setRequeststatus("initial review");
+        }
+        else{
+            request.setRequeststatus("pending documentation");
+        }
+
+        return request;
+    }
+
     public boolean deleteRequestById(long id) throws Exception{
         try{
             requestRepository.deleteById(id);
@@ -41,6 +110,10 @@ public class RequestService {
         }catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    public void deleteRequestsByUserId(Long iduser) {
+        requestRepository.deleteByIduser(iduser);
     }
 
     public Request requestloan(Long iduser, int amount, int term, float rate, String loantype, int propertyvalue,

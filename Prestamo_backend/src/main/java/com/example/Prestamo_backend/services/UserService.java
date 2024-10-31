@@ -1,7 +1,9 @@
 package com.example.Prestamo_backend.services;
 
+import com.example.Prestamo_backend.repositories.RequestRepository;
 import com.example.Prestamo_backend.repositories.UserRepository;
 import com.example.Prestamo_backend.entitites.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RequestRepository requestRepository;
 
     public ArrayList<User> getUsertype(String type){
         return (ArrayList<User>) userRepository.findByUsertype(type);
@@ -28,8 +32,10 @@ public class UserService {
 
     public User updateUser(User user){ return userRepository.save(user);}
 
+    @Transactional
     public boolean deleteUser(Long id) throws Exception{
         try{
+            requestRepository.deleteByIduser(id);
             userRepository.deleteById(id);
             return true;
         } catch (Exception e){

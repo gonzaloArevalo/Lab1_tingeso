@@ -18,8 +18,10 @@ const deleteRequestById = (id) => {
     return httpClient.delete(`/api/v1/request/${id}`);
 };
 
-const updateRequest = (data) => {
-    return httpClient.put("/api/v1/request/", data);
+const updateRequest = (formData) => {
+    return httpClient.put("/api/v1/request/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
 };
 
 const requestLoan = (formData) => {
@@ -40,6 +42,10 @@ const calculateTotalCosts = (request) => {
     return httpClient.post(`/api/v1/request/totalcosts`, request);
 };
 
+const deleteRequestsByUserId = (iduser) => {
+    return httpClient.delete(`/api/v1/request/user/${iduser}`);
+};
+
 export default {
     getAllRequests,
     get,
@@ -50,4 +56,5 @@ export default {
     evaluateRequest,
     viewStatus,
     calculateTotalCosts,
+    deleteRequestsByUserId,
 };

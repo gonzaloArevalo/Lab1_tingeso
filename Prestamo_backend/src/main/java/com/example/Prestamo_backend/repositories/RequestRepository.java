@@ -10,7 +10,7 @@ import java.util.List;
 public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findByIduser(Long iduser);
 
-
+    void deleteByIduser(Long iduser);
 
     public Request findByRequeststatus(String requeststatus);
 

@@ -50,9 +50,33 @@ public class RequestController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Request> updateRequest(@RequestBody Request request){
-        Request updateRequest = requestService.updateRequest(request);
-        return ResponseEntity.ok(updateRequest);
+    public ResponseEntity<Request> updateRequest(
+            @RequestParam Long id,
+            @RequestParam int amount,
+            @RequestParam int term,
+            @RequestParam float rate,
+            @RequestParam String loantype,
+            @RequestParam int propertyvalue,
+            @RequestPart(required = false) MultipartFile incometicket,
+            @RequestPart(required = false) MultipartFile credithistorial,
+            @RequestPart(required = false) MultipartFile appraisalcertificate,
+            @RequestPart(required = false) MultipartFile deedfirsthome,
+            @RequestPart(required = false) MultipartFile buisnessstate,
+            @RequestPart(required = false) MultipartFile buisnessplan,
+            @RequestPart(required = false) MultipartFile rembudget,
+            @RequestPart(required = false) MultipartFile appcertificatenew) {
+        try {
+
+            Request request = requestService.buildRequestFromParams(
+                    id, amount,term,rate,loantype,propertyvalue,incometicket, credithistorial, appraisalcertificate,
+                    deedfirsthome, buisnessstate, buisnessplan,
+                    rembudget, appcertificatenew
+            );
+            Request updatedRequest = requestService.updateRequest(request);
+            return ResponseEntity.ok(updatedRequest);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PostMapping("/request")
@@ -117,5 +141,6 @@ public class RequestController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 }

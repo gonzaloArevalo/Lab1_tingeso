@@ -53,11 +53,12 @@ const AddEditRequest = () => {
         if (appCertificateNew) formData.append("appcertificatenew", appCertificateNew);
 
         if(id){
+            formData.append("id", id);
             requestService
             .updateRequest(formData)
             .then((response) => {
                 console.log("solicitud ha sido actualizada.", response.data);
-                navigate(`/request/list/${paramIdUser}`);
+                navigate(`/request/list`);
             })
             .catch((error) => {
                 console.log(

@@ -12,7 +12,7 @@ const TotalCosts = () => {
         const fetchTotalCost = async () => {
             try {
                 
-                const requestResponse = await requestService.getRequestById(id);
+                const requestResponse = await requestService.get(id);
                 const request = requestResponse.data;
 
                 const totalCostResponse = await requestService.calculateTotalCosts(request);
@@ -36,7 +36,7 @@ const TotalCosts = () => {
     return (
         <div>
             <h2>Costo Total del Préstamo</h2>
-            <p>El costo total del préstamo es: ${totalCost}</p>
+            <pre>El costo total del préstamo es: ${totalCost}</pre>
         </div>
     );
 };

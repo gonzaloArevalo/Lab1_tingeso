@@ -85,7 +85,7 @@ public class RequestController {
         }
     }
 
-    @GetMapping("/evaluate")
+    @GetMapping("/evaluate/{idrequest}")
     public ResponseEntity<String> evaluateRequest(@PathVariable Long idrequest){
         try{
             String evaluationResult = requestService.RequestEvaluation(idrequest);
@@ -107,7 +107,7 @@ public class RequestController {
         }
     }
 
-    @GetMapping("/totalcosts")
+    @PostMapping("/totalcosts")
     public ResponseEntity<String> calculateTotalCosts(@RequestBody Request request){
         try{
             String costs = requestService.calculatetotalcosts(request);

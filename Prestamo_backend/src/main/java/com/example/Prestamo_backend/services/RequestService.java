@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.time.Period;
 
 @Service
 public class RequestService {
@@ -29,11 +30,8 @@ public class RequestService {
     public ArrayList<Request> getRequests(){
         return (ArrayList<Request>) requestRepository.findAll();
     }
-
     public List<Request> getRequestsByUserId(Long iduser){return requestRepository.findByIduser(iduser);}
-
     public Request getRequestById(Long id) { return requestRepository.findById(id).orElse(null);}
-
     public Request updateRequest(Request request){return requestRepository.save(request);}
 
     public boolean deleteRequestById(long id) throws Exception{
@@ -205,7 +203,7 @@ public class RequestService {
         return "the request has been approved";
     }
 
-    private boolean quotaincoming(Request request){
+    public boolean quotaincoming(Request request){
         User user = userRepository.findById(request.getIduser()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         double qta = calculatequota(request);
         double relation =  (qta/user.getIncome())*100;
@@ -277,7 +275,7 @@ public class RequestService {
         return (75 - age) >= 5;
     }
 
-    private int obtainAge(Date age){
+    public int obtainAge(Date age){
         if(age != null){
             Calendar birth = Calendar.getInstance();
             birth.setTime(age);
@@ -335,7 +333,7 @@ public class RequestService {
                     return false;
                 }
                 //if there was a withdrawal and that withdraw was superior to the 50% of user account
-                if(actualmov < 0 && Math.abs(actualmov) > 0.5 * balance){
+                else if(actualmov < 0 && Math.abs(actualmov) > 0.5 * balance){
                     return false;
                 }
             }
@@ -352,23 +350,21 @@ public class RequestService {
         List<Integer> mov = Arrays.stream(user.getMovements().split(",")).map(movement -> Integer.parseInt(movement.trim())).collect(Collectors.toList());
         List<LocalDate> dt = Arrays.stream(user.getMovmntsdate().split(",")).map(date -> LocalDate.parse(date.trim(), formatter)).collect(Collectors.toList());
 
-        int minbank = (int) (0.05 * user.getIncome());
+        float minbank = (float) (0.05 * user.getIncome());
 
-        List<LocalDate> dtmonthly = new ArrayList<>();
         LocalDate lastAddedDate = null;
-
         for(int i = 0; i < mov.size(); i++){
             LocalDate actualdt = dt.get(i);
             int actualmov = mov.get(i);
-
             if(actualmov > 0 && !actualdt.isBefore(twelvemonths) && !actualdt.isAfter(today)){
-
                 if(actualmov < minbank){
                     return false;
                 }
-                if(lastAddedDate != null){
-                    long monthsDifference = java.time.temporal.ChronoUnit.MONTHS.between(lastAddedDate, actualdt);
+                else if(lastAddedDate != null){
+                    Period periodDifference = Period.between(lastAddedDate, actualdt).normalized();
+                    int monthsDifference = periodDifference.getMonths();
                     if (monthsDifference != 1 && monthsDifference != 3) {
+                        System.out.println("Intervalo irregular entre fechas: " + lastAddedDate + " y " + actualdt);
                         return false;
                     }
                 }

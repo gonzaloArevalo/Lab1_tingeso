@@ -4,19 +4,24 @@ import com.example.Prestamo_backend.entitites.Request;
 import com.example.Prestamo_backend.entitites.User;
 import com.example.Prestamo_backend.repositories.RequestRepository;
 import com.example.Prestamo_backend.repositories.UserRepository;
-import com.example.Prestamo_backend.services.RequestService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 import java.util.Optional;
 import java.util.List;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.Date;
+import java.time.ZoneId;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -258,6 +263,31 @@ public class RequestServiceTest {
     }
 
     @Test
+    void whenRequestLoanWithUnknownType_thenThrowsIllegalArgumentException() {
+        // Given: un usuario simulado en la base de datos
+        User user = new User();
+        user.setId(1L);
+        user.setName("Test User");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        // Cuando: se utiliza un tipo de préstamo desconocido
+        String unknownLoanType = "exotic investment";
+
+        // When & Then: verifica que la llamada lanza una IllegalArgumentException con el mensaje correcto
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            requestService.requestloan(
+                    user.getId(), 10000, 15, 3.5f, unknownLoanType, 50000,
+                    null, null, null, null, null, null, null, null
+            );
+        });
+
+        // Verifica que el mensaje de la excepción es el esperado
+        assertThat(exception.getMessage()).contains("Unknown loan type");
+    }
+
+
+
+    @Test
     void whenRequestLoanWithFirstLivingTypeAndMissingDocuments_thenStatusIsPendingDocumentation() throws Exception {
         // Given
         User user = new User();
@@ -282,12 +312,12 @@ public class RequestServiceTest {
 
     @Test
     void whenEvaluateRequest_thenUpdatesRequestStatus() throws ParseException{
-        // Given: Crea un usuario y una solicitud asociada
+        // Given
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         User user = new User();
         user.setId(1L);
         user.setName("Clint");
-        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setAge(dateFormat.parse("01-10-1980"));//73  1950
         user.setTimeinwork(dateFormat.parse("01-01-2010"));
         user.setCreation(dateFormat.parse("01-01-2020"));
         user.setBankaccount(200000);
@@ -308,21 +338,563 @@ public class RequestServiceTest {
         request.setRate(4.5f);
         request.setPropertyvalue(300000);
         request.setLoantype("first living");
-        //request.setSavingability("solid");
+
 
         when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
         when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // When: Llama a evaluateRequest
+        // When
         String result = requestService.RequestEvaluation(request.getId());
         System.out.println("Resultado de Evaluación: " + result);
 
-        // Then: Verifica que el estado de la solicitud y el mensaje de evaluación sean correctos
+        // Then
         assertThat(request.getRequeststatus()).isEqualTo("approved");
         assertThat(result).isEqualTo("the request has been approved");
-
-        // Verifica que el repositorio guarda la solicitud actualizada al menos una vez
         verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithSecondLiving_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(5000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(100000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("second living");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("approved");
+        assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithCommercialProperties_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(5000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(100000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("commercial properties");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("approved");
+        assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithRemodelation_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1970"));
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(5000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(100000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("remodelation");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("rejected");
+        //assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithPendingDocumentation_thenStatusRemainsPendingDocumentation() throws ParseException {
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        User user = new User();
+        user.setId(1L);
+        user.setMovements("200, -100, 300, -50");  // Datos ficticios de movimientos
+        user.setMovmntsdate("01-01-2023, 01-02-2023, 01-03-2023, 01-04-2023");  // Fechas de movimientos
+        user.setBankaccount(10000);
+        user.setIncome(3000);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("pending documentation");
+        request.setLoantype("remodelation");
+        request.setAmount(50000);
+        request.setTerm(10);
+        request.setRate(4.5f);
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("pending documentation");
+    }
+
+    @Test
+    void whenEvaluateRequestWithAboveQuota_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(1000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(50000);
+        request.setTerm(5);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("remodelation");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("rejected");
+        //assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithDebtsIncome_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(60000);
+        user.setIncome(1000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(50000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("remodelation");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("rejected");
+        //assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithUnpaid_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(false);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(1000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(50000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("remodelation");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("rejected");
+        //assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithWork_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-2024"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(1000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(50000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("remodelation");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("rejected");
+        //assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithMaxFinancial_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-01-1980"));
+        user.setTimeinwork(dateFormat.parse("01-01-1980"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(200000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(100000);
+        user.setMovements("200, -100, 300, -50, 150, -75");
+        user.setMovmntsdate("01-11-2023, 01-10-2023, 01-09-2023, 01-08-2023, 01-07-2023, 01-06-2023");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(500000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(300000);
+        request.setLoantype("first living");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("rejected");
+        //assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenEvaluateRequestWithAllGood_thenUpdatesRequestStatus() throws ParseException{
+        // Given
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        User user = new User();
+        user.setId(1L);
+        user.setName("Clint");
+        user.setAge(dateFormat.parse("01-10-1980"));//73  1950
+        user.setTimeinwork(dateFormat.parse("01-01-2010"));
+        user.setCreation(dateFormat.parse("01-01-2020"));
+        user.setBankaccount(20000);
+        user.setCredithistory(true);
+        user.setFiles(true);
+        user.setDebts(0);
+        user.setIncome(1000);
+        user.setMovements("80, 100, 60, 75, 90, 120, 130, 85, 95, 110, 70");
+        user.setMovmntsdate("30-11-2024,30-10-2024,30-09-2024,30-08-2024,30-07-2024,30-06-2024,30-05-2024,30-04-2024,30-03-2024,29-02-2024,30-01-2024");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Request request = new Request();
+        request.setId(1L);
+        request.setIduser(user.getId());
+        request.setRequeststatus("initial review");
+        request.setAmount(1000);
+        request.setTerm(20);
+        request.setRate(4.5f);
+        request.setPropertyvalue(30000);
+        request.setLoantype("first living");
+
+
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(requestRepository.save(any(Request.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String result = requestService.RequestEvaluation(request.getId());
+        System.out.println("Resultado de Evaluación: " + result);
+
+        // Then
+        assertThat(request.getRequeststatus()).isEqualTo("approved");
+        assertThat(result).isEqualTo("the request has been approved");
+        verify(requestRepository, atLeastOnce()).save(request);
+    }
+
+    @Test
+    void whenDepositsAreIrregularFrequency_thenReturnsFalse() {
+        // Given
+        User user = new User();
+        user.setId(1L);
+        user.setIncome(2000);
+
+        // Movimientos con intervalo de 2 meses, no permitidos
+        user.setMovements("150,200,150,200,150,200,150,200,150,200,150,200");
+        user.setMovmntsdate("30-11-2024, 30-10-2024, 30-09-2024, 30-08-2024, 30-07-2024, 30-06-2024, 30-05-2024, 30-04-2024, 30-03-2024, 29-02-2024, 30-01-2024");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        Request request = new Request();
+        request.setIduser(1L);
+
+        // When
+        boolean result = requestService.validateperiodicbank(request);
+
+        // Then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void whenAgeIsNull_thenObtainAgeReturnsZero() {
+        // Given
+        Date age = null;
+
+        // When
+        int result = requestService.obtainAge(age);
+
+        // Then
+        assertThat(result).isEqualTo(0);
+    }
+
+    @Test
+    void whenMovementResultsInNegativeBalance_thenSaveHistoryReturnsFalse() {
+        // Given
+        User user = new User();
+        user.setId(1L);
+        user.setBankaccount(5000);
+        user.setMovements("2000,-7000,-3000");
+        user.setMovmntsdate("01-11-2023,15-11-2023,01-12-2023");
+
+        Request request = new Request();
+        request.setIduser(user.getId());
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        // When
+        boolean result = requestService.savehistory(request);
+
+        // Then
+        assertThat(result).isFalse();  // Espera que el resultado sea falso debido a un balance negativo
+    }
+
+    @Test
+    void whenWithdrawalExceedsFiftyPercentOfBalance_thenSaveHistoryReturnsFalse() {
+        // Given
+        User user = new User();
+        user.setId(1L);
+        user.setBankaccount(5000);
+        user.setMovements("-2000,-3000,3000");  // Este retiro (3000) es más del 50% del balance
+        user.setMovmntsdate("01-11-2023,15-11-2023,01-12-2023");  // Fechas en los últimos 12 meses
+
+        Request request = new Request();
+        request.setIduser(user.getId());
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        // When
+        boolean result = requestService.savehistory(request);
+
+        // Then
+        assertThat(result).isFalse();  // Espera que el resultado sea falso debido al retiro mayor al 50%
+    }
+
+    @Test
+    void whenUserHasLessThanTwoYearsAccount_thenValidateSalOldUsesTwentyPercentThreshold() {
+        // Given: Un usuario con menos de 2 años desde la creación de su cuenta
+        User user = new User();
+        user.setId(1L);
+        user.setBankaccount(25000);  // El saldo del banco del usuario
+        user.setCreation(Date.from(LocalDate.now().minusMonths(18).atStartOfDay(ZoneId.systemDefault()).toInstant())); // 1.5 años de antigüedad
+
+        Request request = new Request();
+        request.setIduser(user.getId());
+        request.setAmount(100000); //
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        // When:
+        boolean result = requestService.validatesalold(request);
+
+        // Then:
+        assertThat(result).isTrue();
+        user.setBankaccount(15000);
+
+        result = requestService.validatesalold(request);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void whenRecentWithdrawalExceeds30PercentOfBalance_thenReturnsFalse() {
+        // Given
+        User user = new User();
+        user.setId(1L);
+        user.setBankaccount(1000);  // Saldo inicial del usuario
+
+        // Movimientos de dinero dentro de los últimos 6 meses, incluyendo un retiro significativo
+        user.setMovements("100,-400,50,-350,100,-200");
+        user.setMovmntsdate("01-06-2024,01-07-2024,01-08-2024,01-09-2024,01-10-2024,01-11-2024");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        Request request = new Request();
+        request.setIduser(1L);
+
+        // When
+        boolean result = requestService.recentretire(request);
+
+        // Then
+        assertThat(result)
+                .as("Validación de retiros recientes significativos en los últimos 6 meses")
+                .isFalse();
     }
 
     @Test
@@ -337,6 +909,160 @@ public class RequestServiceTest {
 
         // Then
         assertThat(statusMessage).contains("In initial review");
+    }
+
+    @Test
+    void whenViewStatus2_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("pending documentation");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("missing important documents");
+    }
+
+    @Test
+    void whenViewStatus3_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("under evaluation");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("The application has passed initial review");
+    }
+
+    @Test
+    void whenViewStatus4_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("pre-approved");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("has been evaluated and meets basic bank criteria");
+    }
+
+    @Test
+    void whenViewStatus5_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("final approval");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("The client has accepted the proposed conditions");
+    }
+
+    @Test
+    void whenViewStatus6_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("approved");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("The application is approved and ready for disbursement");
+    }
+
+    @Test
+    void whenViewStatus7_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("rejected");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("has been evaluated and does not meet the bank's criteria");
+    }
+
+    @Test
+    void whenViewStatus8_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("canceled");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("The customer canceled the request before approval");
+    }
+
+    @Test
+    void whenViewStatus9_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("disbursement");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("The application is approved, and disbursement is in progress");
+    }
+
+    @Test
+    void whenViewStatus10_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus(null);
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("The request has no defined status");
+    }
+
+    @Test
+    void whenViewStatus11_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus(null);
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(2L);
+
+        // Then
+        assertThat(statusMessage).contains("No request found for the given request ID");
+    }
+
+    @Test
+    void whenViewStatus12_thenReturnsCorrectStatusMessage() {
+        // Given
+        Request request = new Request();
+        request.setRequeststatus("X");
+        when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
+
+        // When
+        String statusMessage = requestService.viewStatus(1L);
+
+        // Then
+        assertThat(statusMessage).contains("Unknown request status");
     }
 
     @Test

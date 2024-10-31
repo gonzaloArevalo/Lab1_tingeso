@@ -168,7 +168,7 @@ const RequestList = ({showAddButton}) => {
                         <TableCell align="left">{request.amount}</TableCell>
                         <TableCell align="left">{request.term}</TableCell>
                         <TableCell align="right">{request.rate}</TableCell>
-                        <TableCell align="right">{request.loantye}</TableCell>
+                        <TableCell align="right">{request.loantype}</TableCell>
                         <TableCell>
                             <Button
                                 variant="contained"

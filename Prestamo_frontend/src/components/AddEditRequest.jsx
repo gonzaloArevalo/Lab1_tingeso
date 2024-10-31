@@ -164,17 +164,6 @@ const AddEditRequest = () => {
 
             <FormControl fullWidth margin="normal">
                 <TextField
-                    id="propertyvalue"
-                    label="Valor de la Propiedad"
-                    type="number"
-                    value={propertyValue}
-                    onChange={(e) => setPropertyValue(e.target.value)}
-                    variant="standard"
-                />
-            </FormControl>
-
-            <FormControl fullWidth margin="normal">
-                <TextField
                     id="loantype"
                     label="Tipo de Préstamo"
                     type="text"
@@ -191,6 +180,17 @@ const AddEditRequest = () => {
                     <MenuItem value={"remodelation"}>Remodelacion</MenuItem>
 
                 </TextField>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+                <TextField
+                    id="propertyvalue"
+                    label="Valor de la Propiedad"
+                    type="number"
+                    value={propertyValue}
+                    onChange={(e) => setPropertyValue(e.target.value)}
+                    variant="standard"
+                />
             </FormControl>
 
             <FormControl fullWidth margin="normal">

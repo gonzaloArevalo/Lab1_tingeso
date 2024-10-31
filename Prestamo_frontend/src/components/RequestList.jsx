@@ -16,23 +16,24 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import { useParams } from 'react-router-dom';
 
-const RequestList = ({showAddButton, userId }) => {
+const RequestList = ({showAddButton}) => {
+    const { id: iduser } = useParams();
     const [requests, setRequests] = useState([]);
     const [evaluationMessage, setEvaluationMessage] = useState("");
     const [statusMessage, setStatusMessage] = useState("");
     const navigate = useNavigate();
 
     const init = () => {
-        if (userId) {
+        if (iduser) {
             requestService
-                .getRequestsByUserId(userId)
+                .getRequestsByUserId(iduser)
                 .then((response) => {
-                    console.log(`Mostrando solicitudes del usuario ${userId}.`, response.data);
+                    console.log(`Mostrando solicitudes del usuario ${iduser}.`, response.data);
                     setRequests(response.data);
                 })
                 .catch((error) => {
                     console.log(
-                      `Error al intentar mostrar las solicitudes del usuario ${userId}.`,
+                      `Error al intentar mostrar las solicitudes del usuario ${iduser}.`,
                       error
                     );
                 });
@@ -56,7 +57,8 @@ const RequestList = ({showAddButton, userId }) => {
 
     useEffect(() => {
         init();
-    }, [userId]);
+        console.log("User ID desde useParams:", iduser);
+    }, [iduser]);
 
     const handleDelete = (id) =>{
         console.log("Printing id", id);
@@ -86,12 +88,12 @@ const RequestList = ({showAddButton, userId }) => {
     };
 
     const handleAddRequest = () => {
-        if (userId) {
-            navigate(`/request/add/${userId}`);
+        if (iduser) {
+            navigate(`/request/add/${iduser}`);
         } else {
-            navigate('/client/list'); // 
+            console.log("userId no está definido");
         }
-    };
+    };    
 
     const handleTotalCosts = (id) => {
         navigate(`/quota/totalcosts/${id}`);
@@ -132,7 +134,7 @@ const RequestList = ({showAddButton, userId }) => {
                     variant="contained" 
                     color="primary" 
                     startIcon={<QueueIcon/>}
-                    onClick={handleAddRequest}
+                    onClick={() => handleAddRequest()}
                 >
                     Añadir Solicitud
                 </Button>

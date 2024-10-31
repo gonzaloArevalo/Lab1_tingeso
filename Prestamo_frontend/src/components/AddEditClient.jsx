@@ -99,7 +99,7 @@ const AddEditClient = () => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            component="form"
+            
         >
             <h3> {titleClientForm} </h3>
             <hr />

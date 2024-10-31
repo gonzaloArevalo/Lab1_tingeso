@@ -14,11 +14,11 @@ const AddEditRequest = () => {
 
     const [iduser, setIdUser] = useState(paramIdUser || "");
     const [requestStatus, setRequestStatus] = useState("");
-    const [amount, setAmount] = useState("");
-    const [term, setTerm] = useState("");
-    const [rate, setRate] = useState("");
-    const [loanType, setLoanType] = useState("");
-    const [propertyValue, setPropertyValue] = useState("");
+    const [amount, setAmount] = useState(0);
+    const [term, setTerm] = useState(0);
+    const [rate, setRate] = useState(0);
+    const [loanType, setLoanType] = useState("first living");
+    const [propertyValue, setPropertyValue] = useState(0);
     const [incomeTicket, setIncomeTicket] = useState(null);
     const [creditHistorial, setCreditHistorial] = useState(null);
     const [appraisalCertificate, setAppraisalCertificate] = useState(null);
@@ -35,54 +35,57 @@ const AddEditRequest = () => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append("iduser", iduser);
+        formData.append("iduser", paramIdUser);
         formData.append("requeststatus", requestStatus);
         formData.append("amount", amount);
         formData.append("term", term);
         formData.append("rate", rate);
-        formData.append("loanType", loanType);
+        formData.append("loantype", loanType);
         formData.append("propertyvalue", propertyValue);
 
         if (incomeTicket) formData.append("incometicket", incomeTicket);
         if (creditHistorial) formData.append("credithistorial", creditHistorial);
         if (appraisalCertificate) formData.append("appraisalcertificate", appraisalCertificate);
-        if (deedFirstHome) formData.append("deedfirstHome", deedFirstHome);
+        if (deedFirstHome) formData.append("deedfirsthome", deedFirstHome);
         if (businessState) formData.append("businessstate", businessState);
         if (businessPlan) formData.append("businessplan", businessPlan);
         if (remBudget) formData.append("rembudget", remBudget);
-        if (appCertificateNew) formData.append("appcertificateNew", appCertificateNew);
+        if (appCertificateNew) formData.append("appcertificatenew", appCertificateNew);
 
         if(id){
             requestService
             .updateRequest(formData)
             .then((response) => {
                 console.log("solicitud ha sido actualizada.", response.data);
-                navigate(`/request/list/${id}`);
-              })
-              .catch((error) => {
+                navigate(`/request/list/${paramIdUser}`);
+            })
+            .catch((error) => {
                 console.log(
-                  "Ha ocurrido un error al intentar actualizar datos de solicitud.",
-                  error
+                "Ha ocurrido un error al intentar actualizar datos de solicitud.",
+                error
                 );
-              });
+            });
         }
         else{
             requestService
             .requestLoan(formData)
             .then((response) => {
                 console.log("Solicitud ha sido ingresada.", response.data);
-                navigate("/request/list");
-              })
+                navigate(`/request/list/${paramIdUser}`);
+            })
               .catch((error) => {
                 console.log(
-                  "Ha ocurrido un error al intentar crear nueva Solicitud.",
-                  error
+                "Ha ocurrido un error al intentar crear nueva Solicitud.",
+                error
                 );
-              });
+            });
         }
     }
 
     useEffect(() => {
+        if (paramIdUser) {
+            setIdUser(paramIdUser);
+        }
 
         if(id){
             SetTitleRequestForm("Editar Solicitud");
@@ -106,7 +109,7 @@ const AddEditRequest = () => {
         else{
             SetTitleRequestForm("Nueva Solicitud")
         }
-    }, []);
+    }, [paramIdUser, id]);
 
     const handleFileChange = (e, setFile) => {
         const file = e.target.files[0];
@@ -119,7 +122,7 @@ const AddEditRequest = () => {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        component="form"
+        
         >
             <h3> {titleRequestForm} </h3>
             <hr />
@@ -267,7 +270,7 @@ const AddEditRequest = () => {
                 </Button>
             </FormControl>
             <hr />
-            <Link to="/request/list:id">Back to List</Link>
+            <Link to={`/request/list/${paramIdUser}`}>Back to List</Link>
         </Box>
     )
 

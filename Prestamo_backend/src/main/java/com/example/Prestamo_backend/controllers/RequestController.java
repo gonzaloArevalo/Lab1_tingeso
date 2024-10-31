@@ -2,6 +2,7 @@ package com.example.Prestamo_backend.controllers;
 
 import com.example.Prestamo_backend.services.RequestService;
 import com.example.Prestamo_backend.entitites.Request;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("api/v1/request")
 @CrossOrigin("*")
 public class RequestController {
+    @Autowired
     RequestService requestService;
 
     @GetMapping("/")

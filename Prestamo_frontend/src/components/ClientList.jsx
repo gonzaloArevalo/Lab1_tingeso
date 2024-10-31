@@ -102,7 +102,7 @@ const ClientList = () => {
                   Tipo de usuario
                 </TableCell>
                 <TableCell align="left" sx={{ fontWeight: "bold" }}>
-                  Edad
+                  Nacimiento
                 </TableCell>
               </TableRow>
             </TableHead>

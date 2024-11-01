@@ -34,7 +34,7 @@ export default function Navbar(){
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 SisPB: Sistema de Prestamos Bancarios
               </Typography>
-              <Button color="inherit">Register/Login</Button>
+              
             </Toolbar>
           </AppBar>
     

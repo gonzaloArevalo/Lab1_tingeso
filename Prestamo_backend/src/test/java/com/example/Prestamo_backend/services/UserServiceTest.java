@@ -2,6 +2,7 @@ package com.example.Prestamo_backend.services;
 
 import com.example.Prestamo_backend.entitites.User;
 import com.example.Prestamo_backend.repositories.UserRepository;
+import com.example.Prestamo_backend.repositories.RequestRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,6 +15,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doNothing;
+
 
 
 import java.text.SimpleDateFormat;
@@ -26,6 +29,8 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private RequestRepository requestRepository;
     //UserService userService = new UserService();
 
     @InjectMocks
@@ -121,6 +126,9 @@ public class UserServiceTest {
     void whenDeleteUser_thenReturnsTrue() throws Exception {
         // Given
         Long userId = 1L;
+
+        doNothing().when(requestRepository).deleteByIduser(userId);
+        doNothing().when(userRepository).deleteById(userId);
 
         // When
         boolean isDeleted = userService.deleteUser(userId);

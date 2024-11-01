@@ -39,7 +39,7 @@ public class UserService {
             userRepository.deleteById(id);
             return true;
         } catch (Exception e){
-            throw new Exception(e.getMessage());
+            throw new Exception("Delete error");
         }
     }
 

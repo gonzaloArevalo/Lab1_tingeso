@@ -165,6 +165,104 @@ public class RequestServiceTest {
     }
 
     @Test
+    void testBuildRequestFromParamsWithFullDocumentsSecondLiving() throws Exception {
+        // Given
+        Long id = 1L;
+        Integer amount = 10000;
+        Integer term = 12;
+        Float rate = 5.0f;
+        String loanType = "second living";
+        Integer propertyValue = 50000;
+
+
+        MultipartFile incomeTicket = new MockMultipartFile("incomeTicket", new byte[]{1, 2, 3});
+        MultipartFile creditHistorial = new MockMultipartFile("creditHistorial", new byte[]{4, 5, 6});
+        MultipartFile appraisalCertificate = new MockMultipartFile("appraisalCertificate", new byte[]{7, 8, 9});
+        MultipartFile deedFirstHome = new MockMultipartFile("deedFirstHome", new byte[]{3, 6, 1});
+
+        // when
+        Request result = requestService.buildRequestFromParams(
+                id, amount, term, rate, loanType, propertyValue, incomeTicket,
+                creditHistorial, appraisalCertificate, deedFirstHome, null, null, null, null
+        );
+
+        // then
+        assertThat(result.getId()).isEqualTo(id);
+        assertThat(result.getAmount()).isEqualTo(amount);
+        assertThat(result.getTerm()).isEqualTo(term);
+        assertThat(result.getRate()).isEqualTo(rate);
+        assertThat(result.getLoantype()).isEqualTo(loanType);
+        assertThat(result.getPropertyvalue()).isEqualTo(propertyValue.intValue());
+        assertThat(result.getRequeststatus()).isEqualTo("initial review");
+    }
+
+    @Test
+    void testBuildRequestFromParamsWithFullDocumentsFirstLiving() throws Exception {
+        // Given
+        Long id = 1L;
+        Integer amount = 10000;
+        Integer term = 12;
+        Float rate = 5.0f;
+        String loanType = "first living";
+        Integer propertyValue = 50000;
+
+
+        MultipartFile incomeTicket = new MockMultipartFile("incomeTicket", new byte[]{1, 2, 3});
+        MultipartFile creditHistorial = new MockMultipartFile("creditHistorial", new byte[]{4, 5, 6});
+        MultipartFile appraisalCertificate = new MockMultipartFile("appraisalCertificate", new byte[]{7, 8, 9});
+
+        // when
+        Request result = requestService.buildRequestFromParams(
+                id, amount, term, rate, loanType, propertyValue, incomeTicket,
+                creditHistorial, appraisalCertificate, null, null, null, null, null
+        );
+
+        // then
+        assertThat(result.getId()).isEqualTo(id);
+        assertThat(result.getAmount()).isEqualTo(amount);
+        assertThat(result.getTerm()).isEqualTo(term);
+        assertThat(result.getRate()).isEqualTo(rate);
+        assertThat(result.getLoantype()).isEqualTo(loanType);
+        assertThat(result.getPropertyvalue()).isEqualTo(propertyValue.intValue());
+        assertThat(result.getRequeststatus()).isEqualTo("initial review");
+    }
+
+    @Test
+    void testBuildRequestFromParamsWithMissingDocuments() throws Exception {
+        // Given
+        Long id = 2L;
+        Integer amount = 20000;
+        Integer term = 24;
+        Float rate = 6.5f;
+        String loanType = "second living";
+        Integer propertyValue = 80000;
+
+
+        MultipartFile incomeTicket = new MockMultipartFile("incomeTicket", new byte[]{1, 2, 3});
+        MultipartFile creditHistorial = new MockMultipartFile("creditHistorial", new byte[]{4, 5, 6});
+        MultipartFile appraisalCertificate = null; // Documento faltante
+
+        // When
+        Request result = requestService.buildRequestFromParams(
+                id, amount, term, rate, loanType, propertyValue, incomeTicket,
+                creditHistorial, appraisalCertificate, null, null, null, null, null
+        );
+
+        // then
+        assertThat(result.getRequeststatus()).isEqualTo("pending documentation");
+    }
+
+    @Test
+    void testBuildRequestFromParamsUnknownLoanType() {
+        // Given / when / then
+        assertThrows(IllegalArgumentException.class, () -> {
+            requestService.buildRequestFromParams(
+                    1L, 10000, 12, 5.0f, "unknown loan", 50000, null, null, null, null, null, null, null, null
+            );
+        });
+    }
+
+    @Test
     void whenRequestLoanWithFirstLivingType_thenStatusIsInitialReviewIfAllDocumentsPresent() throws Exception {
         // Given
         User user = new User();

@@ -16,7 +16,10 @@ const TotalCosts = () => {
                 const request = requestResponse.data;
 
                 const totalCostResponse = await requestService.calculateTotalCosts(request);
-                setTotalCost(totalCostResponse.data);
+                
+
+                const formattedCost = totalCostResponse.data.split("\n");
+                setTotalCost(formattedCost);
                 setLoading(false);
             } 
             catch (error) {
@@ -33,11 +36,21 @@ const TotalCosts = () => {
     if (loading) return <p>Cargando...</p>;
     if (error) return <p>{error}</p>;
 
-    return (
-        <div>
-            <h2>Costo Total del Préstamo</h2>
-            <pre>El costo total del préstamo es: ${totalCost}</pre>
-        </div>
+    return(
+        <div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "10px", maxWidth: "400px", margin: "auto" }}>
+                <h2>Costo Total del Préstamo</h2>
+                {totalCost.map((line, index) => (
+                    <div key={index} style={{
+                        border: "1px solid #ddd",
+                        padding: "10px",
+                        margin: "5px 0",
+                        borderRadius: "5px",
+                        backgroundColor: "#f9f9f9"
+                    }}>
+                        {line}
+                    </div>
+                ))}
+            </div>
     );
 };
 

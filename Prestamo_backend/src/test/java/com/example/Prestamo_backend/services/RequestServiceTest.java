@@ -173,6 +173,8 @@ public class RequestServiceTest {
         Float rate = 5.0f;
         String loanType = "second living";
         Integer propertyValue = 50000;
+        Request request = new Request();
+        request.setId(id);
 
 
         MultipartFile incomeTicket = new MockMultipartFile("incomeTicket", new byte[]{1, 2, 3});
@@ -182,7 +184,7 @@ public class RequestServiceTest {
 
         // when
         Request result = requestService.buildRequestFromParams(
-                id, amount, term, rate, loanType, propertyValue, incomeTicket,
+                request, amount, term, rate, loanType, propertyValue, incomeTicket,
                 creditHistorial, appraisalCertificate, deedFirstHome, null, null, null, null
         );
 
@@ -205,6 +207,8 @@ public class RequestServiceTest {
         Float rate = 5.0f;
         String loanType = "first living";
         Integer propertyValue = 50000;
+        Request request = new Request();
+        request.setId(id);
 
 
         MultipartFile incomeTicket = new MockMultipartFile("incomeTicket", new byte[]{1, 2, 3});
@@ -213,7 +217,7 @@ public class RequestServiceTest {
 
         // when
         Request result = requestService.buildRequestFromParams(
-                id, amount, term, rate, loanType, propertyValue, incomeTicket,
+                request, amount, term, rate, loanType, propertyValue, incomeTicket,
                 creditHistorial, appraisalCertificate, null, null, null, null, null
         );
 
@@ -236,6 +240,8 @@ public class RequestServiceTest {
         Float rate = 6.5f;
         String loanType = "second living";
         Integer propertyValue = 80000;
+        Request request = new Request();
+        request.setId(id);
 
 
         MultipartFile incomeTicket = new MockMultipartFile("incomeTicket", new byte[]{1, 2, 3});
@@ -244,7 +250,7 @@ public class RequestServiceTest {
 
         // When
         Request result = requestService.buildRequestFromParams(
-                id, amount, term, rate, loanType, propertyValue, incomeTicket,
+                request, amount, term, rate, loanType, propertyValue, incomeTicket,
                 creditHistorial, appraisalCertificate, null, null, null, null, null
         );
 
@@ -255,9 +261,10 @@ public class RequestServiceTest {
     @Test
     void testBuildRequestFromParamsUnknownLoanType() {
         // Given / when / then
+        Request request = new Request();
         assertThrows(IllegalArgumentException.class, () -> {
             requestService.buildRequestFromParams(
-                    1L, 10000, 12, 5.0f, "unknown loan", 50000, null, null, null, null, null, null, null, null
+                    request, 10000, 12, 5.0f, "unknown loan", 50000, null, null, null, null, null, null, null, null
             );
         });
     }

@@ -35,14 +35,12 @@ public class RequestService {
     public Request updateRequest(Request request){return requestRepository.save(request);}
 
     public Request buildRequestFromParams(
-            Long id, Integer amount, Integer term, Float rate,
+            Request request, Integer amount, Integer term, Float rate,
             String loanType, Integer propertyValue, MultipartFile incomeTicket,
             MultipartFile creditHistorial, MultipartFile appraisalCertificate,
             MultipartFile deedFirstHome, MultipartFile businessState,
             MultipartFile businessPlan, MultipartFile remBudget, MultipartFile appCertificateNew
     ) {
-        Request request = new Request();
-        request.setId(id);
         request.setAmount(amount);
         request.setTerm(term);
         request.setRate(rate);

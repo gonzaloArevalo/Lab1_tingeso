@@ -66,9 +66,10 @@ public class RequestController {
             @RequestPart(required = false) MultipartFile rembudget,
             @RequestPart(required = false) MultipartFile appcertificatenew) {
         try {
+            Request existingRequest = requestService.getRequestById(id);
 
             Request request = requestService.buildRequestFromParams(
-                    id, amount,term,rate,loantype,propertyvalue,incometicket, credithistorial, appraisalcertificate,
+                    existingRequest, amount,term,rate,loantype,propertyvalue,incometicket, credithistorial, appraisalcertificate,
                     deedfirsthome, buisnessstate, buisnessplan,
                     rembudget, appcertificatenew
             );

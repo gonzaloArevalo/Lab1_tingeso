@@ -185,8 +185,8 @@ public class RequestService {
     public String RequestEvaluation(Long idrequest){
         Request request = requestRepository.findById(idrequest).orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
-        if (!"initial review".equalsIgnoreCase(request.getRequeststatus())) {
-            return "Request cannot be evaluated as it is not in 'initial review' status.";
+        if ("pending documentation".equalsIgnoreCase(request.getRequeststatus())) {
+            return "Request cannot be evaluated as it is in 'pending documents' status.";
         }
 
         request.setRequeststatus("under evaluation");

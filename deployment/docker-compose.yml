@@ -1,21 +1,72 @@
 version: "3.8"
 services:
-  frontend:
-    container_name: prestamo-frontend
+  # Frontend services
+  frontend1:
     image: 746778/prestamo-frontend:latest
-    ports:
-      - "8070:80"
-    deploy:
-      restart_policy:
-        condition: on-failure
+    networks:
+      - frontend-network
+  
+  frontend2:
+    image: 746778/prestamo-frontend:latest
+    networks:
+      - frontend-network
+    
+  frontend3:
+    image: 746778/prestamo-frontend:latest
+    networks:
+      - frontend-network
 
-  backend:
-    container_name: loan-backend
+  # Backend services
+  backend1:
     image: 746778/loan-backend:latest
-    ports:
-      - "8090:8090"
     environment:
       - DB_HOST=192.168.100.54
-    deploy:
-      restart_policy:
-        condition: on-failure
+    networks:
+      - backend-network
+      
+  backend2:
+    image: 746778/loan-backend:latest
+    environment:
+      - DB_HOST=192.168.100.54
+    networks:
+      - backend-network
+      
+  backend3:
+    image: 746778/loan-backend:latest
+    environment:
+      - DB_HOST=192.168.100.54
+    networks:
+      - backend-network
+      
+  # Nginx for frontend load balancing
+  nginx-frontend:
+    image: nginx:latest
+    ports:
+      - "8070:80"
+    volumes:
+      - ./nginx-frontend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend1
+      - frontend2
+      - frontend3
+    networks:
+      - frontend-network
+      
+  # Nginx for backend load balancing
+  nginx-backend:
+    image: nginx:latest
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./nginx-backend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - backend-network
+
+networks:
+  frontend-network:
+  backend-network:
+

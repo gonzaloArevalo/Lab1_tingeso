@@ -1,0 +1,16 @@
+pipeline{
+	agent any
+	tools{
+		maven 'maven_3_8_1'
+	}
+	stages{
+		stage('Unit Tests'){
+			steps{
+				script{
+					dsh 'docker build -t dbloan/full_service:latest .'
+				}
+			}
+		}
+		
+	}
+}

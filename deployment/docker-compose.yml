@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  frontend:
+    container_name: prestamo-frontend
+    image: 746778/prestamo-frontend:latest
+    ports:
+      - "8070:80"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  backend:
+    container_name: loan-backend
+    image: 746778/loan-backend:latest
+    ports:
+      - "8090:8090"
+    environment:
+      - DB_HOST=192.168.100.54
+    deploy:
+      restart_policy:
+        condition: on-failure

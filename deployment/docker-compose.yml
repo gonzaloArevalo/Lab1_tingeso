@@ -1,46 +1,108 @@
 version: "3.8"
 services:
+
+  dbloan:
+    image: mysql:latest
+    container_name: dbloan-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 2024
+      MYSQL_DATABASE: dbloan
+      MYSQL_USER: loan
+      MYSQL_PASSWORD: 2024
+    ports:
+      - "3307:3306"  # Exponer el puerto si necesitas acceso externo a MySQL
+    volumes:
+      - dbloan_data:/var/lib/mysql
+    networks:
+      - bankloan-backend-network 
+    deploy:
+      restart_policy:
+        condition: on-failure  
+      
   # Frontend services
   frontend1:
     image: 746778/prestamo-frontend:latest
+    container_name: prestamo-frontend-1
+    ports:
+      - 8071:80
     networks:
-      - frontend-network
+      - bankloan-frontend-network
   
   frontend2:
     image: 746778/prestamo-frontend:latest
+    container_name: prestamo-frontend-2
+    ports:
+      - 8072:80
     networks:
-      - frontend-network
+      - bankloan-frontend-network
     
   frontend3:
     image: 746778/prestamo-frontend:latest
+    container_name: prestamo-frontend-3
+    ports:
+      - 8073:80
     networks:
-      - frontend-network
+      - bankloan-frontend-network
 
   # Backend services
   backend1:
     image: 746778/loan-backend:latest
+    container_name: loan-backend-1
+    ports:
+      - "8091:8090"
     environment:
-      - DB_HOST=192.168.100.54
+      - DB_HOST=dbloan-container
+      - DB_PORT=3306
+      - DB_USERNAME=loan
+      - DB_PASSWORD=2024
     networks:
-      - backend-network
+      - bankloan-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure  
+    depends_on:
+      - dbloan
       
   backend2:
     image: 746778/loan-backend:latest
+    container_name: loan-backend-2
+    ports:
+      - "8092:8090"
     environment:
-      - DB_HOST=192.168.100.54
+      - DB_HOST=dbloan-container
+      - DB_PORT=3306
+      - DB_USERNAME=loan
+      - DB_PASSWORD=2024
     networks:
-      - backend-network
+      - bankloan-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure  
+    depends_on:
+      - dbloan
       
   backend3:
     image: 746778/loan-backend:latest
+    container_name: loan-backend-3
+    ports:
+      - "8093:8090"
     environment:
-      - DB_HOST=192.168.100.54
+      - DB_HOST=dbloan-container
+      - DB_PORT=3306
+      - DB_USERNAME=loan
+      - DB_PASSWORD=2024
     networks:
-      - backend-network
+      - bankloan-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure  
+    depends_on:
+      - dbloan
       
   # Nginx for frontend load balancing
   nginx-frontend:
     image: nginx:latest
+    container_name: nginx-frontend-container
     ports:
       - "8070:80"
     volumes:
@@ -50,7 +112,7 @@ services:
       - frontend2
       - frontend3
     networks:
-      - frontend-network
+      - bankloan-frontend-network
       
   # Nginx for backend load balancing
   nginx-backend:
@@ -64,9 +126,11 @@ services:
       - backend2
       - backend3
     networks:
-      - backend-network
+      - bankloan-backend-network
 
 networks:
-  frontend-network:
-  backend-network:
-
+  bankloan-backend-network:
+  bankloan-frontend-network:
+    
+volumes:
+  dbloan_data:

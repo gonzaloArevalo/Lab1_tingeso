@@ -8,7 +8,7 @@ console.log(prestamoBackendServer)
 console.log(prestamoBackendPort)
 
 export default axios.create({
-    baseURL: `http://loandeposit-app.brazilsouth.cloudapp.azure.com`,
+    baseURL: `http://loandeposit-app.brazilsouth.cloudapp.azure.com:8090`,
     headers: {
         'Content-Type': 'application/json'
     }

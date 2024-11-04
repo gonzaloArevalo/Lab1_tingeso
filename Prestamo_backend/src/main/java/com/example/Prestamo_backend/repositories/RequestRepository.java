@@ -12,17 +12,4 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     void deleteByIduser(Long iduser);
 
-    public Request findByRequeststatus(String requeststatus);
-
-    public Request findByAmount(int amount);
-    List<Request> findByAmountGreaterThan(int amount);
-
-    public Request findByTerm(int term);
-    List<Request> findByTermGreaterThan(int term);
-    List<Request> findByTermLessThan(int term);
-
-    public Request findByRate(float rate);
-    List<Request> findByRateGreaterThan(float rate);
-    public Request findByLoantype(String loantype);
-    public Request findByQuota(int quota);
 }

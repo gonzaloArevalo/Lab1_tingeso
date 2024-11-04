@@ -110,10 +110,6 @@ public class RequestService {
         }
     }
 
-    public void deleteRequestsByUserId(Long iduser) {
-        requestRepository.deleteByIduser(iduser);
-    }
-
     public Request requestloan(Long iduser, int amount, int term, float rate, String loantype, int propertyvalue,
                                MultipartFile incometicket, MultipartFile credithistorial,
                                MultipartFile appraisalcertificate, MultipartFile deedfirsthome,

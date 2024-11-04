@@ -81,7 +81,7 @@ export default function Simulation(){
 
             {simulationResult !== null && (
                 <Typography variant="h6" sx={{ mt: 3 }}>
-                    Resultado de la Simulación: {simulationResult}
+                    La cuota mensual seria de: {simulationResult}
                 </Typography>
             )}
         </Box>

@@ -8,9 +8,11 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidemenu from "./Sidemenu";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar(){
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleDrawer = (open) => (event) => {
         setOpen(open);

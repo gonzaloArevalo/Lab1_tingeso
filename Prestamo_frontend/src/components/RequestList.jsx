@@ -141,7 +141,6 @@ const RequestList = ({showAddButton}) => {
             )}
           </Link>
           <br /> <br />
-          {statusMessage && <p>{statusMessage}</p>}
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
                 <TableRow>

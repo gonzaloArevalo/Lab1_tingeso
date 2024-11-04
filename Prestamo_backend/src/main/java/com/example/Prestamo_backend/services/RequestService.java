@@ -543,11 +543,11 @@ public class RequestService {
 
         double monthlycost = qta + desgravamen + fire;
         double totalcost = (monthlycost * request.getTerm()) + admin;
-        return "monthly quota: " + qta +
-                "\nDesgravamen insurance: " + desgravamen +
-                "\nfire insurance: " + fire +
-                "\nadministrator fee: " + admin +
-                "\ntotal monthly costs: " + monthlycost +
-                "\ntotal costs: " + totalcost;
+        return "monthly quota: " + (int)Math.round(qta) +
+                "\nDesgravamen insurance: " + (int)Math.round(desgravamen) +
+                "\nfire insurance: " + (int)Math.round(fire) +
+                "\nadministrator fee: " + (int)Math.round(admin) +
+                "\ntotal monthly costs: " + (int)Math.round(monthlycost) +
+                "\ntotal costs: " + (int)Math.round(totalcost);
     }
 }

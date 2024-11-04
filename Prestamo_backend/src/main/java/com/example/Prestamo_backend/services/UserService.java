@@ -43,7 +43,7 @@ public class UserService {
         }
     }
 
-    public double getSimlation(int amount, float term, float rate, String loan){
+    public int getSimlation(int amount, float term, float rate, String loan){
         switch(loan.toLowerCase()){
             case "first living":
                 rate = limitrate(3.5f, 5.0f, rate);
@@ -64,7 +64,7 @@ public class UserService {
             default:
                 throw new IllegalArgumentException("loan not recognized");
         }
-        return calculateSimulation(amount, term, rate);
+        return (int) Math.round(calculateSimulation(amount, term, rate));
     }
 
     public float limitrate(float minrate, float maxrate, float rate){

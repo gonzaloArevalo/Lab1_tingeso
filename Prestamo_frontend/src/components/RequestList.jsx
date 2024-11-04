@@ -141,7 +141,7 @@ const RequestList = ({showAddButton}) => {
             )}
           </Link>
           <br /> <br />
-          {statusMessage && <p>{statusMessage}</p>}
+          
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
                 <TableRow>
@@ -225,8 +225,33 @@ const RequestList = ({showAddButton}) => {
                                 Costos Totales
                             </Button>
 
-                            {evaluationMessage && <p>{evaluationMessage}</p>}
+                            {statusMessage && (
+                            <Box
+                                sx={{
+                                marginTop: 1,
+                                padding: 2,
+                                border: "1px solid #ccc",
+                                borderRadius: 2,
+                                backgroundColor: "#e3f2fd"
+                                }}
+                            >
+                                <strong>Status:</strong> {statusMessage}
+                            </Box>
+                            )}
 
+                            {evaluationMessage && (
+                            <Box
+                                sx={{
+                                marginTop: 1,
+                                padding: 2,
+                                border: "1px solid #ccc",
+                                borderRadius: 2,
+                                backgroundColor: "#e3f2fd"
+                                }}
+                            >
+                                <strong>Evaluación:</strong> {evaluationMessage}
+                            </Box>
+                            )}
                         </TableCell>
                     </TableRow>
                 ))}

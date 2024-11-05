@@ -231,7 +231,6 @@ const RequestList = ({showAddButton}) => {
                                 </p>
                             )}
 
-                            {/* Mensaje de evaluación */}
                             {evaluationMessage && (
                                 <p>
                                     <strong>Evaluación:</strong> {evaluationMessage}

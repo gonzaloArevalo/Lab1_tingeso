@@ -394,7 +394,7 @@ public class RequestService {
             int actualmov = mov.get(i);
 
             if(!actualdt.isBefore(twelvemonths) && !actualdt.isAfter(today)){
-                balance = balance + actualmov;
+                balance = balance - actualmov;
 
                 if(balance <= 0){
                     return false;
@@ -474,7 +474,7 @@ public class RequestService {
                     return false;
                 }
 
-                balance = balance + actualmov;
+                balance = balance - actualmov;
             }
         }
         return true;

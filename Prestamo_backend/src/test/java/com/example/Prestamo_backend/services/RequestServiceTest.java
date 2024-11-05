@@ -939,8 +939,8 @@ public class RequestServiceTest {
         User user = new User();
         user.setId(1L);
         user.setBankaccount(5000);
-        user.setMovements("-2000,-3000,3000");  // Este retiro (3000) es más del 50% del balance
-        user.setMovmntsdate("01-11-2023,15-11-2023,01-12-2023");  // Fechas en los últimos 12 meses
+        user.setMovements("2000,3000,-3000");  // Este retiro (3000) es más del 50% del balance
+        user.setMovmntsdate("01-08-2024,15-09-2024,01-10-2024");  // Fechas en los últimos 12 meses
 
         Request request = new Request();
         request.setIduser(user.getId());

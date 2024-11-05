@@ -224,9 +224,20 @@ const RequestList = ({showAddButton}) => {
                                 Costos Totales
                             </Button>
                         </TableCell>
-                        {statusMessage && <p>{statusMessage}</p>}
+                        <TableCell>
+                            {statusMessage && (
+                                <p>
+                                    <strong>Estado:</strong> {statusMessage}
+                                </p>
+                            )}
 
-                        {evaluationMessage && <p>{evaluationMessage}</p>}
+                            {/* Mensaje de evaluación */}
+                            {evaluationMessage && (
+                                <p>
+                                    <strong>Evaluación:</strong> {evaluationMessage}
+                                </p>
+                            )}
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>

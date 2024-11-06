@@ -76,7 +76,7 @@ export default function Simulation(){
 
             </TextField>
             <Button variant="contained" color="primary" onClick={handleSimulation} fullWidth sx={{ mt: 2 }}>
-                Calcular Simulación
+                Simular Credito
             </Button>
 
             {simulationResult !== null && (
